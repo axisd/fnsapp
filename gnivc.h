@@ -17,11 +17,11 @@
 #include "libssco/money_operation.h"
 
 
-class CGnivcSender// : public QObject
+class CGnivcSender : public QObject
 {
-//    Q_OBJECT
+    Q_OBJECT
 public:
-    CGnivcSender(/*QObject *parent*/);
+    CGnivcSender(QObject *parent = 0);
     ~CGnivcSender();
 
 	bool initLibrary(const QString& __iniFile);    
@@ -35,7 +35,7 @@ public:
 private:
     libvpm::Instance* m_instance;
 	void ClearToken(const QString& __fileName);
-//    void procEvent(const int pause) const;
+    void procEvent(const int pause);
 };
 
 

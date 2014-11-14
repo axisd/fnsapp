@@ -21,7 +21,7 @@ FnsServer::FnsServer(QObject *parent) :
 
 bool FnsServer::execReceipt(SSCO::ReceiptPtr __receipt, QString &__fiscalText)
 {
-    CGnivcSender sender;
+    CGnivcSender sender(this);
 
     return false;
 }

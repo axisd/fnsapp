@@ -19,8 +19,8 @@
 const double Mult = 0.1;
 
 
-CGnivcSender::CGnivcSender(/*QObject *parent*/) /*:
-    QObject(parent)*/
+CGnivcSender::CGnivcSender(QObject *parent) :
+    QObject(parent)
 {}
 
 CGnivcSender::~CGnivcSender()
@@ -399,9 +399,9 @@ void CGnivcSender::SendXReport()
 	libvpm::ReportResponse xResponse = m_instance->processGetReport(VPM_REPORT_X, secs);
 }
 
-/*void CGnivcSender::procEvent(const int pause) const
+void CGnivcSender::procEvent(const int pause)
 {
     QEventLoop *tELoop = new QEventLoop(this);
     QTimer::singleShot(pause, tELoop, SLOT(quit()));
     tELoop->exec();
-}*/
+}
