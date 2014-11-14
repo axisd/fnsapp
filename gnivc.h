@@ -11,7 +11,7 @@
 #include <QString>
 
 // Main
-#include "libssco/receipt.h"
+#include "libssco/receipt_v1.h"
 #include "libssco/shift_close.h"
 #include "libssco/money_operation.h"
 
@@ -25,7 +25,7 @@ public:
 	CGnivcSender();
 	~CGnivcSender();
 
-    void SendReceipt(const SSCO::ReceiptPtr __receipt, QString& __fiscalText);
+    void SendReceipt(const SSCO::ReceiptV1Ptr __receipt, QString& __fiscalText);
     void SendShiftClose(const SSCO::ShiftClosePtr __shiftNumber);
 	void SendXReport();
     void MoneyInsert(const SSCO::MoneyOperationPtr __moHeader);

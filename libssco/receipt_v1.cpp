@@ -15,9 +15,12 @@ void ReceiptV1::serialize(QXmlStreamWriter& __writer)
 	writeTag(__writer, "local_number", m_local_number);
 	writeTag(__writer, "shift_open", m_shift_open);
     writeTag(__writer, "type", m_type);
+    writeTag(__writer, "stock_name", m_stock_name);
 	writeTag(__writer, "open_datetime", m_open_datetime);
 	writeOptional(__writer, "close_datetime", m_close_datetime );
 	writeOptional(__writer, "card_number", m_card_number );
+    writeTag(__writer, "login_id", m_login_id);
+    writeTag(__writer, "login_name", m_login_name);
 	writeTag(__writer, "uploaded", m_uploaded);
 
 	writeVector(__writer, "ReceiptItems", m_items);
@@ -40,18 +43,21 @@ void ReceiptV1::deserialize(QXmlStreamReader& __reader)
 	readTag(__reader, "local_number", m_local_number);
 	readTag(__reader, "shift_open", m_shift_open);
     readTag(__reader, "type", m_type);
+    readTag(__reader, "stock_name", m_stock_name);
 	readTag(__reader, "open_datetime", m_open_datetime);
 	readOptional(__reader, "close_datetime", m_close_datetime );
 	readOptional(__reader, "card_number", m_card_number );
+    readTag(__reader, "login_id", m_login_id);
+    readTag(__reader, "login_name", m_login_name);
 	readTag(__reader, "uploaded", m_uploaded);	
 
-	readVector<ModelReceiptItem>(__reader, "ReceiptItems", m_items);
+    readVector<ModelReceiptItemV1>(__reader, "ReceiptItems", m_items);
 
 	readObject<ModelReceiptPaymentCash>(__reader, "ReceiptPaymentCash", m_payment_cash);
 	readObject<ModelReceiptPaymentCashless>(__reader, "ReceiptPaymentCashless", m_payment_cashless);
 }
 
-void ReceiptV1::addItem (const boost::shared_ptr<ModelReceiptItem>& __item)
+void ReceiptV1::addItem (const boost::shared_ptr<ModelReceiptItemV1> &__item)
 {
 	m_items.push_back(__item);
 }
@@ -60,7 +66,7 @@ const currency SSCO::ReceiptV1::getTotal() const
 {
 	currency total(0);
 
-	for (QVector<ReceiptItemPtr>::const_iterator item = m_items.begin(); item != m_items.end(); ++item)
+    for (QVector<ReceiptItemV1Ptr>::const_iterator item = m_items.begin(); item != m_items.end(); ++item)
 	{
 		total += (*item)->m_total.get();
 		
@@ -86,7 +92,7 @@ const currency SSCO::ReceiptV1::getTotalWithoutDiscounts() const
 {
 	currency total(0);
 
-	for (QVector<ReceiptItemPtr>::const_iterator item = m_items.begin(); item != m_items.end(); ++item)
+    for (QVector<ReceiptItemV1Ptr>::const_iterator item = m_items.begin(); item != m_items.end(); ++item)
 	{
 		total += (*item)->m_total.get();
 	}
@@ -95,7 +101,7 @@ const currency SSCO::ReceiptV1::getTotalWithoutDiscounts() const
 }
 void SSCO::ReceiptV1::setItemsPosition()
 {
-	QVector<ReceiptItemPtr>::const_iterator i;
+    QVector<ReceiptItemV1Ptr>::const_iterator i;
 	int pos(1);
 	for (i = m_items.begin(); i != m_items.end(); ++i)
 	{

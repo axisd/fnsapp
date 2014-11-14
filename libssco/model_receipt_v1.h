@@ -26,9 +26,12 @@ namespace SSCO
 		unsigned int m_local_number;
 		unsigned int m_shift_open;
         unsigned int m_type;
+        QString m_stock_name;
 		QDateTime m_open_datetime;
 		boost::optional<QDateTime> m_close_datetime;
 		boost::optional<QString> m_card_number;
+        unsigned int m_login_id;
+        QString m_login_name;
 		bool m_uploaded;
 	};
 }

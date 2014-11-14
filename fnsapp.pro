@@ -36,7 +36,9 @@ SOURCES += main.cpp \
     libssco/time_limitation.cpp \
     libssco/shift_close.cpp \
     libssco/money_operation.cpp \
-    libssco/receipt_v1.cpp
+    libssco/receipt_v1.cpp \
+    libssco/model_receipt_item_v1.cpp \
+    libssco/receipt_item_tax.cpp
 
 HEADERS += fnsserver.h \
     gnivc.h \
@@ -67,16 +69,18 @@ HEADERS += fnsserver.h \
     libssco/model_shift_close.h \
     libssco/money_operation.h \
     libssco/model_receipt_v1.h \
-    libssco/receipt_v1.h
+    libssco/receipt_v1.h \
+    libssco/model_receipt_item_v1.h \
+    libssco/model_receipt_item_tax.h \
+    libssco/receipt_item_tax.h
 
 win32 {
     INCLUDEPATH += \
         C:/home/ukm/suite/boost-1.53.0-gcc44/include \
         C:/home/ukm/suite/libvpm-3.1.6-1.2.0/include
 
-    LIBS += \
-        -LC:/home/ukm/suite/boost-1.53.0-gcc44/lib -lboost_program_options-mgw44-mt-1_53 \
-        -LC:/home/ukm/suite/libvpm-3.1.6-1.2.0/lib -lvpm
+    LIBS += -LC:/home/ukm/suite/libvpm-3.1.6-1.2.0/lib -lvpm
+    LIBS += -LC:/home/ukm/suite/boost-1.53.0-gcc44/lib -lboost_program_options-mgw44-mt-1_53
 }
 
 unix {
