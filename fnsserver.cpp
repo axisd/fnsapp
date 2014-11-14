@@ -1,6 +1,6 @@
 #include "fnsserver.h"
 
-#include "sax_serializer_base.h"
+#include "libssco/sax_serializer_base.h"
 
 // Qt
 #include <QTcpSocket>
@@ -54,8 +54,8 @@ void FnsServer::procReceipt()
     reader.readNext();
     reader.readNext();
 
-    SSCO::ReceiptPtr receipt_with_discounts (new SSCO::Receipt());
-    receipt_with_discounts->read(reader);
+    SSCO::ReceiptPtr receipt (new SSCO::Receipt());
+    receipt->read(reader);
 
     clientConnection->disconnectFromHost();
 }

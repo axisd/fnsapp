@@ -17,53 +17,66 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
     fnsserver.cpp \
-    model_receipt_item.cpp \
-    model_receipt_item_discount.cpp \
-    model_receipt_payment_cash.cpp \
-    model_receipt_payment_cashless.cpp \
-    receipt.cpp \
-    sax_serializer_base.cpp \
-    large.cpp \
-    item.cpp \
-    model_item_limitation.cpp \
-    shift_open.cpp \
-    classif.cpp \
-    model_barcode.cpp \
-    time_limitation.cpp \
-    model_classif_limitation.cpp \
-    cdebug.cpp \
-    logger.cpp
+    gnivc.cpp \
+    liblogger/cdebug.cpp \
+    liblogger/logger.cpp \
+    libssco/classif.cpp \
+    libssco/item.cpp \
+    libssco/large.cpp \
+    libssco/model_barcode.cpp \
+    libssco/model_classif_limitation.cpp \
+    libssco/model_item_limitation.cpp \
+    libssco/model_receipt_item.cpp \
+    libssco/model_receipt_item_discount.cpp \
+    libssco/model_receipt_payment_cash.cpp \
+    libssco/model_receipt_payment_cashless.cpp \
+    libssco/receipt.cpp \
+    libssco/sax_serializer_base.cpp \
+    libssco/shift_open.cpp \
+    libssco/time_limitation.cpp \
+    libssco/shift_close.cpp \
+    libssco/money_operation.cpp \
+    libssco/receipt_v1.cpp
 
-HEADERS += \
-    fnsserver.h \
-    model_money_operation.h \
-    model_receipt.h \
-    model_receipt_item.h \
-    model_receipt_item_discount.h \
-    model_receipt_payment_cash.h \
-    model_receipt_payment_cashless.h \
-    receipt.h \
-    sax_serializer_base.h \
-    cfixedpointround.h \
-    large.h \
-    item.h \
-    model_item.h \
-    model_item_limitation.h \
-    shift_open.h \
-    classif.h \
-    model_barcode.h \
-    time_limitation.h \
-    model_classif.h \
-    model_classif_limitation.h \
-    model_time_limitation.h \
-    model_shift_open.h \
-    cdebug.h \
-    logger.h
-
+HEADERS += fnsserver.h \
+    gnivc.h \
+    liblogger/cdebug.h \
+    liblogger/logger.h \
+    libssco/cfixedpointround.h \
+    libssco/classif.h \
+    libssco/item.h \
+    libssco/large.h \
+    libssco/model_barcode.h \
+    libssco/model_classif.h \
+    libssco/model_classif_limitation.h \
+    libssco/model_item.h \
+    libssco/model_item_limitation.h \
+    libssco/model_money_operation.h \
+    libssco/model_receipt.h \
+    libssco/model_receipt_item.h \
+    libssco/model_receipt_item_discount.h \
+    libssco/model_receipt_payment_cash.h \
+    libssco/model_receipt_payment_cashless.h \
+    libssco/model_shift_open.h \
+    libssco/model_time_limitation.h \
+    libssco/receipt.h \
+    libssco/sax_serializer_base.h \
+    libssco/shift_open.h \
+    libssco/time_limitation.h \
+    libssco/shift_close.h \
+    libssco/model_shift_close.h \
+    libssco/money_operation.h \
+    libssco/model_receipt_v1.h \
+    libssco/receipt_v1.h
 
 win32 {
-    INCLUDEPATH += C:\home\ukm\suite\boost-1.53.0-gcc44\include
-    LIBS += -LC:\home\ukm\suite\boost-1.53.0-gcc44\lib -lboost_program_options-mgw44-mt-1_53
+    INCLUDEPATH += \
+        C:/home/ukm/suite/boost-1.53.0-gcc44/include \
+        C:/home/ukm/suite/libvpm-3.1.6-1.2.0/include
+
+    LIBS += \
+        -LC:/home/ukm/suite/boost-1.53.0-gcc44/lib -lboost_program_options-mgw44-mt-1_53 \
+        -LC:/home/ukm/suite/libvpm-3.1.6-1.2.0/lib -lvpm
 }
 
 unix {

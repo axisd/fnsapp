@@ -1,7 +1,7 @@
 #include "sax_serializer_base.h"
 
 // MISC
-#include <cdebug.h>
+#include "../liblogger/cdebug.h"
 
 SaxSerializerBase::SaxSerializerBase(const QString &__tag_name) :
 	m_tagName(__tag_name)

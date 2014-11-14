@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QTcpServer>
 
-#include "receipt.h"
+#include "libssco/receipt.h"
 
 class FnsServer : public QObject
 {
