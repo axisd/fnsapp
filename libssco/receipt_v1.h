@@ -1,5 +1,5 @@
-#ifndef _RECEIPT_H
-#define _RECEIPT_H
+#ifndef _RECEIPT_V1_H
+#define _RECEIPT_V1_H
 
 // models
 #include "model_receipt_v1.h"

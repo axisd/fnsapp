@@ -9,6 +9,7 @@
 
 // Qt
 #include <QString>
+#include <QObject>
 
 // Main
 #include "libssco/receipt_v1.h"
@@ -16,25 +17,25 @@
 #include "libssco/money_operation.h"
 
 
-class CGnivcSender
+class CGnivcSender// : public QObject
 {
+//    Q_OBJECT
 public:
-	libvpm::Instance* m_instance;
+    CGnivcSender(/*QObject *parent*/);
+    ~CGnivcSender();
 
-	bool initLibrary(const QString& __iniFile);
-	CGnivcSender();
-	~CGnivcSender();
+	bool initLibrary(const QString& __iniFile);    
 
     void SendReceipt(const SSCO::ReceiptV1Ptr __receipt, QString& __fiscalText);
-    void SendShiftClose(const SSCO::ShiftClosePtr __shiftNumber);
+    void SendZReport(const SSCO::ShiftClosePtr __shiftNumber);
 	void SendXReport();
-    void MoneyInsert(const SSCO::MoneyOperationPtr __moHeader);
-	void MoneyExtract(void);
+    void MoneyOperation(const SSCO::MoneyOperationPtr __moHeader);
 	void StopInstance(void);
 
 private:
+    libvpm::Instance* m_instance;
 	void ClearToken(const QString& __fileName);
-
+//    void procEvent(const int pause) const;
 };
 
 

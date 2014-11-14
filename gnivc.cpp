@@ -8,22 +8,44 @@
 
 // Qt
 #include <QFile>
+#include <QEventLoop>
+#include <QTimer>
 
-#ifdef __linux__
+/*#ifdef __linux__
     struct termios new_settings;
     struct termios stored_settings;
-#endif
+#endif*/
 
 const double Mult = 0.1;
 
+
+CGnivcSender::CGnivcSender(/*QObject *parent*/) /*:
+    QObject(parent)*/
+{}
+
+CGnivcSender::~CGnivcSender()
+{}
+
 void CGnivcSender::ClearToken(const QString& __fileName)
 {
+    QString bkp_fileName(__fileName);
+    bkp_fileName.append(".bkp");
+
 	QFile file(__fileName);
+    QFile file_bkp(bkp_fileName);
+
 	QByteArray content;
 
 	file.open(QIODevice::ReadOnly);
 	content = file.readAll();
 	file.close();
+
+    if(!file_bkp.exists())
+    {
+        file_bkp.open(QIODevice::WriteOnly);
+        file_bkp.write(content);
+        file_bkp.close();
+    }
 
 	QList<QByteArray> iniList(content.split(0x0A));
 
@@ -63,20 +85,86 @@ bool CGnivcSender::initLibrary(const QString& __iniFile)
 
     bool ok(false);
 
-	while (!ok)
-	{
-		m_instance = new libvpm::Instance(settings);
-		m_instance->start();
+    m_instance = new libvpm::Instance(settings);
+    m_instance->start();
 
-        //sleep_ms(1000);
+    procEvent(1000);
 
-        if (m_instance->mode() != MODE_NORMAL || m_instance->mode() != MODE_RESCUE)
+    switch(m_instance->mode())
+    {
+        /** Нормальный */
+        case MODE_NORMAL:
         {
-			ok = true;
+            LOG_MESSAGE(logger::t_info, "main",
+                        QString("Запущено в нормальном режиме"));
+            ok = true;
+            break;
         }
-	}
 
-	ClearToken(__iniFile);
+            /** Автономный */
+        case MODE_RESCUE:
+        {
+            LOG_MESSAGE(logger::t_info, "main",
+                        QString("Запущено в автономном режиме"));
+            ok = true;
+            break;
+        }
+
+            /** Заблокирован (из-за неправильного токена) */
+        case MODE_BLOCKED_INVALID_TOKEN:
+        {
+            LOG_MESSAGE(logger::t_fatal, "main",
+                        QString("Заблокирован (из-за неправильного токена)"));
+            ok = false;
+            break;
+        }
+
+            /** Не пройдена начальная инициализация */
+        case MODE_NOT_INITIALIZED:
+        {
+            LOG_MESSAGE(logger::t_fatal, "main",
+                        QString("Не пройдена начальная инициализация"));
+            ok = false;
+            break;
+        }
+
+            /** Заблокирован */
+        case MODE_BLOCKED:
+        {
+            LOG_MESSAGE(logger::t_fatal, "main",
+                        QString("Заблокирован"));
+            ok = false;
+            break;
+        }
+
+            /** Заблокирован (превышено время нахождения в аварийном режиме)
+                 *  (считается от первого аварийного чека).
+                 */
+        case MODE_BLOCKED_RESCUE_PERIOD_EXCEEDED:
+        {
+            LOG_MESSAGE(logger::t_fatal, "main",
+                        QString("Заблокирован (превышено время нахождения в аварийном режиме)"));
+            ok = false;
+            break;
+        }
+
+        default:
+        LOG_MESSAGE(logger::t_fatal, "main",
+                    QString("Неизвестное состояние"));
+        ok = false;
+        break;
+    }
+
+    if(!ok)
+    {
+        m_instance->stop();
+        delete (m_instance);
+        m_instance = NULL;
+    }
+    else
+    {
+        ClearToken(__iniFile);
+    }
 
     return ok;
 }
@@ -88,12 +176,6 @@ void CGnivcSender::StopInstance(void)
 		m_instance->stop();
     }
 }
-
-CGnivcSender::CGnivcSender()
-{}
-
-CGnivcSender::~CGnivcSender()
-{}
 
 void CGnivcSender::SendReceipt(const SSCO::ReceiptV1Ptr __receipt, QString& __fiscalText)
 {
@@ -275,7 +357,7 @@ void CGnivcSender::SendReceipt(const SSCO::ReceiptV1Ptr __receipt, QString& __fi
 	}
 }
 
-void CGnivcSender::SendShiftClose(const SSCO::ShiftClosePtr __shift)
+void CGnivcSender::SendZReport(const SSCO::ShiftClosePtr __shift)
 {
     int secs = __shift->m_date.toTime_t();
 
@@ -285,7 +367,7 @@ void CGnivcSender::SendShiftClose(const SSCO::ShiftClosePtr __shift)
     }
 }
 
-void CGnivcSender::MoneyInsert(const SSCO::MoneyOperationPtr __moHeader)
+void CGnivcSender::MoneyOperation(const SSCO::MoneyOperationPtr __moHeader)
 {
     int secs = __moHeader->m_date.toTime_t();
 
@@ -316,3 +398,10 @@ void CGnivcSender::SendXReport()
 
 	libvpm::ReportResponse xResponse = m_instance->processGetReport(VPM_REPORT_X, secs);
 }
+
+/*void CGnivcSender::procEvent(const int pause) const
+{
+    QEventLoop *tELoop = new QEventLoop(this);
+    QTimer::singleShot(pause, tELoop, SLOT(quit()));
+    tELoop->exec();
+}*/

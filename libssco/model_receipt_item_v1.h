@@ -1,5 +1,5 @@
-#ifndef _MODEL_RECEIPT_ITEM
-#define _MODEL_RECEIPT_ITEM
+#ifndef _MODEL_RECEIPT_ITEM_V1_H
+#define _MODEL_RECEIPT_ITEM_V1_H
 
 // Main
 #include "sax_serializer_base.h"
@@ -62,6 +62,5 @@ namespace SSCO
 
     typedef boost::shared_ptr<ModelReceiptItemV1> ReceiptItemV1Ptr;
 }
-
 
 #endif

@@ -15,12 +15,12 @@ public:
 private:
     QTcpServer *tcpServer;
 
-    bool parseReceipt(SSCO::ReceiptPtr __receipt);
+    bool execReceipt(SSCO::ReceiptPtr __receipt, QString &__fiscalText);
 
 signals:
 
 public slots:
-    void procReceipt();
+    void newReceipt();
 
 };
 

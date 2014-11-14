@@ -14,6 +14,10 @@ CONFIG   -= app_bundle
 
 TEMPLATE = app
 
+win32 {
+    #Release:QMAKE_CXXFLAGS += /MT
+    #Debug:QMAKE_CXXFLAGS += /MTd
+}
 
 SOURCES += main.cpp \
     fnsserver.cpp \
@@ -76,12 +80,26 @@ HEADERS += fnsserver.h \
 
 win32 {
     INCLUDEPATH += \
-        C:/home/ukm/suite/boost-1.53.0-gcc44/include \
+        C:/home/ukm/suite/boost-1.53.0/include \
         C:/home/ukm/suite/libvpm-3.1.6-1.2.0/include
 
-    LIBS += -LC:/home/ukm/suite/libvpm-3.1.6-1.2.0/lib -lvpm
+    LIBS += -LC:/home/ukm/suite/libvpm-3.1.6-1.2.0/lib -llibvpm
     LIBS += -LC:/home/ukm/suite/boost-1.53.0-gcc44/lib -lboost_program_options-mgw44-mt-1_53
+
+    CONFIG( debug, debug|release ) {
+        # debug
+        #LIBS += -LC:/home/ukm/suite/boost-1.53.0/lib/boost -llibboost_program_options-vc100-mt-gd-1_53
+    } else {
+        # release
+        #LIBS += -LC:/home/ukm/suite/boost-1.53.0/lib/boost -llibboost_program_options-vc100-mt-1_53
+    }
 }
 
 unix {
+INCLUDEPATH += \
+        /usr/local/storage/home/ukm/suite/gcc-4.5.2-boost-1.55-no-tls/include \
+        /usr/local/storage/home/ukm/suite/libvpm/include
+
+    LIBS += -L/usr/local/storage/home/ukm/suite/libvpm/lib -llibvpm
+    LIBS += -L/usr/local/storage/home/ukm/suite/gcc-4.5.2-boost-1.55-no-tls/lib -lboost_program_options
 }

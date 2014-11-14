@@ -1,6 +1,8 @@
 #include "fnsserver.h"
 
+// Main
 #include "libssco/sax_serializer_base.h"
+#include "gnivc.h"
 
 // Qt
 #include <QTcpSocket>
@@ -14,15 +16,17 @@ FnsServer::FnsServer(QObject *parent) :
         return;
     }
 
-    connect(tcpServer, SIGNAL(newConnection()), this, SLOT(procReceipt()));
+    connect(tcpServer, SIGNAL(newConnection()), this, SLOT(newReceipt()));
 }
 
-bool FnsServer::parseReceipt(SSCO::ReceiptPtr __receipt)
+bool FnsServer::execReceipt(SSCO::ReceiptPtr __receipt, QString &__fiscalText)
 {
+    CGnivcSender sender;
 
+    return false;
 }
 
-void FnsServer::procReceipt()
+void FnsServer::newReceipt()
 {
     QTcpSocket *clientConnection = tcpServer->nextPendingConnection();
     connect(clientConnection, SIGNAL(disconnected()),
