@@ -1,4 +1,4 @@
-#-------------------------------------------------
+﻿#-------------------------------------------------
 #
 # Project created by QtCreator 2014-11-13T16:25:44
 #
@@ -40,7 +40,7 @@ SOURCES += main.cpp \
     libssco/receipt_v1.cpp \
     libssco/model_receipt_item_v1.cpp \
     libssco/receipt_item_tax.cpp \
-    libssco/scoterminalprotocol.cpp
+    libssco/fnsterminalprotocol.cpp
 
 HEADERS += fnsserver.h \
     gnivc.h \

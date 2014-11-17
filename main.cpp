@@ -1,4 +1,4 @@
-#include <QCoreApplication>
+﻿#include <QCoreApplication>
 
 // main
 #include "fnsserver.h"
@@ -14,6 +14,8 @@ int main(int argc, char *argv[])
                 QCoreApplication::applicationDirPath()
     #endif //__linux__
                 ), "HH:mm:ss");
+
+    FnsServer server("vpm.ini", &a);
 
     return a.exec();
 }

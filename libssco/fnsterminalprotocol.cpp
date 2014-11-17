@@ -1,4 +1,4 @@
-#include "fnsterminalprotocol.h"
+﻿#include "fnsterminalprotocol.h"
 
 // Boost
 #include <boost/bind.hpp>
@@ -17,9 +17,7 @@ void CFNSTerminalRequest::deserialize (QXmlStreamReader& __reader)
 	skipEmpty(__reader);
 	__reader.readNext();	
 	readOpenTag(__reader, XML_TAG);
-	readOpenTag(__reader, HEADER_TAG);
-	readTag(__reader, "sco_id", m_sco_id);
-	readTag(__reader, "task_guid", m_task_guid);
+    readOpenTag(__reader, HEADER_TAG);
 	readTag(__reader, "task_efts", m_task_efts);
 	readTag(__reader, "protocol_version", m_protocol_version);
 	readCloseTag(__reader, HEADER_TAG);
@@ -29,7 +27,6 @@ void CFNSTerminalRequest::deserialize (QXmlStreamReader& __reader)
 
 void CFNSTerminalResponse::serialize (QXmlStreamWriter& __writer)
 {
-	writeTag(__writer, "task_guid", m_task_guid);
 	writeTag(__writer, "task_status", m_task_status);
 	writeTag(__writer, "response_data", m_data);
 }

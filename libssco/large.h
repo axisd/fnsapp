@@ -1,4 +1,4 @@
-#ifndef LARGE_H
+﻿#ifndef LARGE_H
 #define LARGE_H
 
 #include <vector>

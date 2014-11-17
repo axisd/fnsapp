@@ -1,4 +1,4 @@
-#include "shift_close.h"
+﻿#include "shift_close.h"
 
 using namespace SSCO;
 

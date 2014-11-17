@@ -1,4 +1,4 @@
-#ifndef MODEL_RECEIPT_ITEM_TAX_H
+﻿#ifndef MODEL_RECEIPT_ITEM_TAX_H
 #define MODEL_RECEIPT_ITEM_TAX_H
 
 // Main

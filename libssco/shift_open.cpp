@@ -1,4 +1,4 @@
-#include "shift_open.h"
+﻿#include "shift_open.h"
 
 using namespace SSCO;
 

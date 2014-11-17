@@ -1,4 +1,4 @@
-#include "receipt_item_tax.h"
+﻿#include "receipt_item_tax.h"
 
 using namespace SSCO;
 

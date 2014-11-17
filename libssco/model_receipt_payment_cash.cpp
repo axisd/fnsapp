@@ -1,4 +1,4 @@
-#include "model_receipt_payment_cash.h"
+﻿#include "model_receipt_payment_cash.h"
 
 using namespace SSCO;
 

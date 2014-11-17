@@ -1,4 +1,4 @@
-#ifndef _SCO_TASK_DESCRIPTION
+﻿#ifndef _SCO_TASK_DESCRIPTION
 #define _SCO_TASK_DESCRIPTION
 
 #include <QString>

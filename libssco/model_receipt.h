@@ -1,4 +1,4 @@
-#ifndef _MODEL_RECEIPT_H
+﻿#ifndef _MODEL_RECEIPT_H
 #define _MODEL_RECEIPT_H
 
 #include <boost/optional.hpp>

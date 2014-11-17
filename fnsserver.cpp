@@ -7,11 +7,13 @@
 // Qt
 #include <QTcpSocket>
 
+int g_port = 6661;
+
 FnsServer::FnsServer(const QString &__iniFile, QObject *parent) :
     QObject(parent)
 {
     tcpServer = new QTcpServer(this);
-    if (!tcpServer->listen()) {
+    if (!tcpServer->listen(QHostAddress("127.0.0.1"), g_port)) {
         LOG_MESSAGE(logger::t_fatal, "main",
                     tr("Unable to start the server: %1.").arg(tcpServer->errorString()));
         return;
@@ -52,14 +54,14 @@ CFNSTerminalResponsePtr FnsServer::execReceipt(const QString &__data, CFNSTermin
     try
     {
         sender.SendReceipt(receipt, fiscalText);
-        resp = CFNSTerminalResponsePtr(new CFNSTerminalResponse(__responce->m_task_guid, FNS_TASK_FINISHED_SUCCESS, fiscalText));
+        resp = CFNSTerminalResponsePtr(new CFNSTerminalResponse(FNS_TASK_FINISHED_SUCCESS, fiscalText));
     }
     catch(std::exception &e)
     {
         LOG_MESSAGE(logger::t_fatal, "main",
                     tr("Ошибка при отправке чека: %1.")
                     .arg(e.what()));
-        resp = CFNSTerminalResponsePtr(new CFNSTerminalResponse(__responce->m_task_guid, FNS_TASK_FINISHED_FAIL, ""));
+        resp = CFNSTerminalResponsePtr(new CFNSTerminalResponse(FNS_TASK_FINISHED_FAIL, ""));
     }
 
     return resp;
@@ -80,14 +82,14 @@ FnsServer::execZReport(const QString &__data, CFNSTerminalResponsePtr __responce
     try
     {
         sender.SendZReport(sc);
-        resp = CFNSTerminalResponsePtr(new CFNSTerminalResponse(__responce->m_task_guid, FNS_TASK_FINISHED_SUCCESS, ""));
+        resp = CFNSTerminalResponsePtr(new CFNSTerminalResponse(FNS_TASK_FINISHED_SUCCESS, ""));
     }
     catch(std::exception &e)
     {
         LOG_MESSAGE(logger::t_fatal, "main",
                     tr("Ошибка при отправке Z-отчета: %1.")
                     .arg(e.what()));
-        resp = CFNSTerminalResponsePtr(new CFNSTerminalResponse(__responce->m_task_guid, FNS_TASK_FINISHED_FAIL, ""));
+        resp = CFNSTerminalResponsePtr(new CFNSTerminalResponse(FNS_TASK_FINISHED_FAIL, ""));
     }
 
     return resp;
@@ -101,14 +103,14 @@ FnsServer::execXReport(CFNSTerminalResponsePtr __responce)
     try
     {
         sender.SendXReport();
-        resp = CFNSTerminalResponsePtr(new CFNSTerminalResponse(__responce->m_task_guid, FNS_TASK_FINISHED_SUCCESS, ""));
+        resp = CFNSTerminalResponsePtr(new CFNSTerminalResponse(FNS_TASK_FINISHED_SUCCESS, ""));
     }
     catch(std::exception &e)
     {
         LOG_MESSAGE(logger::t_fatal, "main",
                     tr("Ошибка при отправке X-отчета: %1.")
                     .arg(e.what()));
-        resp = CFNSTerminalResponsePtr(new CFNSTerminalResponse(__responce->m_task_guid, FNS_TASK_FINISHED_FAIL, ""));
+        resp = CFNSTerminalResponsePtr(new CFNSTerminalResponse(FNS_TASK_FINISHED_FAIL, ""));
     }
 
     return resp;
@@ -129,14 +131,14 @@ FnsServer::execMoneyOperation(const QString &__data, CFNSTerminalResponsePtr __r
     try
     {
         sender.SendMoneyOperation(mo);
-        resp = CFNSTerminalResponsePtr(new CFNSTerminalResponse(__responce->m_task_guid, FNS_TASK_FINISHED_SUCCESS, ""));
+        resp = CFNSTerminalResponsePtr(new CFNSTerminalResponse(FNS_TASK_FINISHED_SUCCESS, ""));
     }
     catch(std::exception &e)
     {
         LOG_MESSAGE(logger::t_fatal, "main",
                     tr("Ошибка при отправке денежной операции: %1.")
                     .arg(e.what()));
-        resp = CFNSTerminalResponsePtr(new CFNSTerminalResponse(__responce->m_task_guid, FNS_TASK_FINISHED_FAIL, ""));
+        resp = CFNSTerminalResponsePtr(new CFNSTerminalResponse(FNS_TASK_FINISHED_FAIL, ""));
     }
 
     return resp;
@@ -192,18 +194,18 @@ void FnsServer::newDataToSend()
     CFNSTerminalRequest request;
     request.deserialize(req_reader);
 
-    CFNSTerminalResponsePtr response(new CFNSTerminalResponse(request.getTaskGuid(), FNS_TASK_IN_PROGRESS, ""));
+    CFNSTerminalResponsePtr response(new CFNSTerminalResponse(FNS_TASK_IN_PROGRESS, ""));
 
-    switch (request.getTaskEfts())
+    switch (request.m_task_efts)
     {
     case FNS_SEND_RECEIPT:
     {
-        sendAnswer(*clientConnection, execReceipt(request.getData(), response));
+        sendAnswer(*clientConnection, execReceipt(request.m_data, response));
         break;
     }
     case FNS_SEND_MONEY_OPERATION:
     {
-        sendAnswer(*clientConnection, execMoneyOperation(request.getData(), response));
+        sendAnswer(*clientConnection, execMoneyOperation(request.m_data, response));
         break;
     }
     case FNS_SEND_X_REPORT:
@@ -213,7 +215,7 @@ void FnsServer::newDataToSend()
     }
     case FNS_SEND_Z_REPORT:
     {
-        sendAnswer(*clientConnection, execZReport(request.getData(), response));
+        sendAnswer(*clientConnection, execZReport(request.m_data, response));
         break;
     }
     default:

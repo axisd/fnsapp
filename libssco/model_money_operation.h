@@ -1,4 +1,4 @@
-#ifndef _MODEL_MONEY_OPERATION
+﻿#ifndef _MODEL_MONEY_OPERATION
 #define _MODEL_MONEY_OPERATION
 
 // misc

@@ -1,4 +1,4 @@
-#ifndef _MODEL_SHIFT_CLOSE
+﻿#ifndef _MODEL_SHIFT_CLOSE
 #define _MODEL_SHIFT_CLOSE
 
 #include <boost/optional.hpp>

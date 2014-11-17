@@ -1,4 +1,4 @@
-#include "model_barcode.h"
+﻿#include "model_barcode.h"
 
 using namespace SSCO;
 

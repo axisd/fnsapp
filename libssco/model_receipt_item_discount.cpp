@@ -1,4 +1,4 @@
-#include "model_receipt_item_discount.h"
+﻿#include "model_receipt_item_discount.h"
 
 using namespace SSCO;
 

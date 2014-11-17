@@ -1,4 +1,4 @@
-#ifndef _MODEL_SHIFT_OPEN
+﻿#ifndef _MODEL_SHIFT_OPEN
 #define _MODEL_SHIFT_OPEN
 
 #include "cfixedpointround.h"

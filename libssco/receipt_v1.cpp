@@ -1,4 +1,4 @@
-#include "receipt_v1.h"
+﻿#include "receipt_v1.h"
 
 using namespace SSCO;
 
