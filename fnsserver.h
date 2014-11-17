@@ -1,4 +1,4 @@
-﻿#ifndef FNSSERVER_H
+#ifndef FNSSERVER_H
 #define FNSSERVER_H
 
 #include <QObject>

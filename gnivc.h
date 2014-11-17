@@ -1,4 +1,4 @@
-﻿#ifndef GNIVC_H
+#ifndef GNIVC_H
 #define GNIVC_H
 
 #include "libvpm/libvpm-c.h"

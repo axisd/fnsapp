@@ -1,4 +1,5 @@
-﻿#include <QCoreApplication>
+#include <QCoreApplication>
+#include <QTextCodec>
 
 // main
 #include "fnsserver.h"
@@ -6,6 +7,10 @@
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
+
+    QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
+    QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
+    QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
 
     c_log().set_format(QString("'%1/logs-fnsservice'/yyyy/MM/yyyy-MM-dd'.log'").arg(
     #ifdef __linux__
