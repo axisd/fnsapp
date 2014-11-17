@@ -12,6 +12,8 @@ TARGET = fnsapp
 CONFIG   += console
 CONFIG   -= app_bundle
 
+QMAKE_MOC = $$QMAKE_MOC -DBOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
+
 TEMPLATE = app
 
 SOURCES += main.cpp \
@@ -37,7 +39,8 @@ SOURCES += main.cpp \
     libssco/money_operation.cpp \
     libssco/receipt_v1.cpp \
     libssco/model_receipt_item_v1.cpp \
-    libssco/receipt_item_tax.cpp
+    libssco/receipt_item_tax.cpp \
+    libssco/scoterminalprotocol.cpp
 
 HEADERS += fnsserver.h \
     gnivc.h \
@@ -71,7 +74,10 @@ HEADERS += fnsserver.h \
     libssco/receipt_v1.h \
     libssco/model_receipt_item_v1.h \
     libssco/model_receipt_item_tax.h \
-    libssco/receipt_item_tax.h
+    libssco/receipt_item_tax.h \
+    libssco/sco_task_description.h \
+    libssco/fns_task_description.h \
+    libssco/fnsterminalprotocol.h
 
 win32 {
     INCLUDEPATH += \

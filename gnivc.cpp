@@ -359,6 +359,11 @@ void CGnivcSender::SendReceipt(const SSCO::ReceiptV1Ptr __receipt, QString& __fi
 
 void CGnivcSender::SendZReport(const SSCO::ShiftClosePtr __shift)
 {
+    if (m_instance == NULL)
+    {
+        throw(std::runtime_error("Библиотека libvpm не запущена. Данные отправляться не будут."));
+    }
+
     int secs = __shift->m_date.toTime_t();
 
 	if (m_instance)
@@ -367,8 +372,13 @@ void CGnivcSender::SendZReport(const SSCO::ShiftClosePtr __shift)
     }
 }
 
-void CGnivcSender::MoneyOperation(const SSCO::MoneyOperationPtr __moHeader)
+void CGnivcSender::SendMoneyOperation(const SSCO::MoneyOperationPtr __moHeader)
 {
+    if (m_instance == NULL)
+    {
+        throw(std::runtime_error("Библиотека libvpm не запущена. Данные отправляться не будут."));
+    }
+
     int secs = __moHeader->m_date.toTime_t();
 
 	vpmMoneyPlacement_t tType = VPM_MONEY_PLACEMENT_DEPOSIT;
@@ -394,6 +404,11 @@ void CGnivcSender::MoneyOperation(const SSCO::MoneyOperationPtr __moHeader)
 
 void CGnivcSender::SendXReport()
 {
+    if (m_instance == NULL)
+    {
+        throw(std::runtime_error("Библиотека libvpm не запущена. Данные отправляться не будут."));
+    }
+
     int secs = QDateTime::currentDateTime().toTime_t();
 
 	libvpm::ReportResponse xResponse = m_instance->processGetReport(VPM_REPORT_X, secs);

@@ -29,7 +29,7 @@ public:
     void SendReceipt(const SSCO::ReceiptV1Ptr __receipt, QString& __fiscalText);
     void SendZReport(const SSCO::ShiftClosePtr __shiftNumber);
 	void SendXReport();
-    void MoneyOperation(const SSCO::MoneyOperationPtr __moHeader);
+    void SendMoneyOperation(const SSCO::MoneyOperationPtr __moHeader);
 	void StopInstance(void);
 
 private:
