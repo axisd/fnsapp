@@ -9,7 +9,7 @@
 #include "libssco/money_operation.h"
 #include "libssco/shift_close.h"
 #include "libssco/shift_open.h"
-#include "libssco/fnsterminalprotocol.h"
+#include "libssco/fns_protocol.h"
 #include "gnivc.h"
 #include "liblogger/cdebug.h"
 
@@ -24,12 +24,12 @@ private:
     QTcpServer *tcpServer;
     CGnivcSender sender;
 
-    CFNSTerminalResponsePtr execReceipt(const QString &__data, CFNSTerminalResponsePtr __responce);
-    CFNSTerminalResponsePtr execZReport(const QString &__data, CFNSTerminalResponsePtr __responce);
-    CFNSTerminalResponsePtr execXReport(CFNSTerminalResponsePtr __responce);
-    CFNSTerminalResponsePtr execMoneyOperation(const QString &__data, CFNSTerminalResponsePtr __responce);
+    CFNSProtocolResponse execReceipt(const QString &__data);
+    CFNSProtocolResponse execZReport(const QString &__data);
+    CFNSProtocolResponse execXReport();
+    CFNSProtocolResponse execMoneyOperation(const QString &__data);
 
-    void sendAnswer(QTcpSocket &socket, CFNSTerminalResponsePtr __answer);
+    void sendAnswer(QTcpSocket &socket, CFNSProtocolResponse &__answer);
 
 signals:
 

@@ -40,7 +40,7 @@ SOURCES += main.cpp \
     libssco/receipt_v1.cpp \
     libssco/model_receipt_item_v1.cpp \
     libssco/receipt_item_tax.cpp \
-    libssco/fnsterminalprotocol.cpp
+    libssco/fns_protocol.cpp
 
 HEADERS += fnsserver.h \
     gnivc.h \
@@ -77,7 +77,7 @@ HEADERS += fnsserver.h \
     libssco/receipt_item_tax.h \
     libssco/sco_task_description.h \
     libssco/fns_task_description.h \
-    libssco/fnsterminalprotocol.h
+    libssco/fns_protocol.h
 
 win32 {
     INCLUDEPATH += \

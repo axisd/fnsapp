@@ -39,9 +39,8 @@ FnsServer::~FnsServer()
     delete tcpServer;
 }
 
-CFNSTerminalResponsePtr FnsServer::execReceipt(const QString &__data, CFNSTerminalResponsePtr __responce)
-{
-    CFNSTerminalResponsePtr resp;
+CFNSProtocolResponse FnsServer::execReceipt(const QString &__data)
+{    
     QString fiscalText;
 
     QXmlStreamReader reader	(__data);
@@ -54,24 +53,21 @@ CFNSTerminalResponsePtr FnsServer::execReceipt(const QString &__data, CFNSTermin
     try
     {
         sender.SendReceipt(receipt, fiscalText);
-        resp = CFNSTerminalResponsePtr(new CFNSTerminalResponse(FNS_TASK_FINISHED_SUCCESS, fiscalText));
+        CFNSProtocolResponse resp(FNS_TASK_FINISHED_SUCCESS, fiscalText);
+        return resp;
     }
     catch(std::exception &e)
     {
         LOG_MESSAGE(logger::t_fatal, "main",
                     tr("Ошибка при отправке чека: %1.")
                     .arg(e.what()));
-        resp = CFNSTerminalResponsePtr(new CFNSTerminalResponse(FNS_TASK_FINISHED_FAIL, ""));
+        CFNSProtocolResponse resp(FNS_TASK_FINISHED_FAIL, "");
+        return resp;
     }
-
-    return resp;
 }
 
-CFNSTerminalResponsePtr
-FnsServer::execZReport(const QString &__data, CFNSTerminalResponsePtr __responce)
+CFNSProtocolResponse FnsServer::execZReport(const QString &__data)
 {
-    CFNSTerminalResponsePtr resp;
-
     QXmlStreamReader reader(__data);
     reader.readNext();
     reader.readNext();
@@ -82,45 +78,39 @@ FnsServer::execZReport(const QString &__data, CFNSTerminalResponsePtr __responce
     try
     {
         sender.SendZReport(sc);
-        resp = CFNSTerminalResponsePtr(new CFNSTerminalResponse(FNS_TASK_FINISHED_SUCCESS, ""));
+        CFNSProtocolResponse resp(FNS_TASK_FINISHED_SUCCESS, "");
+        return resp;
     }
     catch(std::exception &e)
     {
         LOG_MESSAGE(logger::t_fatal, "main",
                     tr("Ошибка при отправке Z-отчета: %1.")
                     .arg(e.what()));
-        resp = CFNSTerminalResponsePtr(new CFNSTerminalResponse(FNS_TASK_FINISHED_FAIL, ""));
+        CFNSProtocolResponse resp(FNS_TASK_FINISHED_FAIL, "");
+        return resp;
     }
-
-    return resp;
 }
 
-CFNSTerminalResponsePtr
-FnsServer::execXReport(CFNSTerminalResponsePtr __responce)
+CFNSProtocolResponse FnsServer::execXReport()
 {
-    CFNSTerminalResponsePtr resp;
-
     try
     {
         sender.SendXReport();
-        resp = CFNSTerminalResponsePtr(new CFNSTerminalResponse(FNS_TASK_FINISHED_SUCCESS, ""));
+        CFNSProtocolResponse resp(FNS_TASK_FINISHED_SUCCESS, "");
+        return resp;
     }
     catch(std::exception &e)
     {
         LOG_MESSAGE(logger::t_fatal, "main",
                     tr("Ошибка при отправке X-отчета: %1.")
                     .arg(e.what()));
-        resp = CFNSTerminalResponsePtr(new CFNSTerminalResponse(FNS_TASK_FINISHED_FAIL, ""));
+        CFNSProtocolResponse resp(FNS_TASK_FINISHED_FAIL, "");
+        return resp;
     }
-
-    return resp;
 }
 
-CFNSTerminalResponsePtr
-FnsServer::execMoneyOperation(const QString &__data, CFNSTerminalResponsePtr __responce)
+CFNSProtocolResponse FnsServer::execMoneyOperation(const QString &__data)
 {
-    CFNSTerminalResponsePtr resp;
-
     QXmlStreamReader reader(__data);
     reader.readNext();
     reader.readNext();
@@ -131,24 +121,24 @@ FnsServer::execMoneyOperation(const QString &__data, CFNSTerminalResponsePtr __r
     try
     {
         sender.SendMoneyOperation(mo);
-        resp = CFNSTerminalResponsePtr(new CFNSTerminalResponse(FNS_TASK_FINISHED_SUCCESS, ""));
+        CFNSProtocolResponse resp(FNS_TASK_FINISHED_SUCCESS, "");
+        return resp;
     }
     catch(std::exception &e)
     {
         LOG_MESSAGE(logger::t_fatal, "main",
                     tr("Ошибка при отправке денежной операции: %1.")
                     .arg(e.what()));
-        resp = CFNSTerminalResponsePtr(new CFNSTerminalResponse(FNS_TASK_FINISHED_FAIL, ""));
+        CFNSProtocolResponse resp(FNS_TASK_FINISHED_FAIL, "");
+        return resp;
     }
-
-    return resp;
 }
 
-void FnsServer::sendAnswer(QTcpSocket &socket, CFNSTerminalResponsePtr __answer)
+void FnsServer::sendAnswer(QTcpSocket &socket, CFNSProtocolResponse &__answer)
 {
     QByteArray data;
     QXmlStreamWriter data_writer (&data);
-    __answer->serialize(data_writer);
+    __answer.serialize(data_writer);
 
     try
     {
@@ -191,31 +181,29 @@ void FnsServer::newDataToSend()
     }    
 
     QXmlStreamReader req_reader (QString::fromUtf8(data));
-    CFNSTerminalRequest request;
+    CFNSProtocolRequest request;
     request.deserialize(req_reader);
 
-    CFNSTerminalResponsePtr response(new CFNSTerminalResponse(FNS_TASK_IN_PROGRESS, ""));
-
-    switch (request.m_task_efts)
+    switch (request.getTaskEfts())
     {
     case FNS_SEND_RECEIPT:
     {
-        sendAnswer(*clientConnection, execReceipt(request.m_data, response));
+        sendAnswer(*clientConnection, execReceipt(request.getData()));
         break;
     }
     case FNS_SEND_MONEY_OPERATION:
     {
-        sendAnswer(*clientConnection, execMoneyOperation(request.m_data, response));
+        sendAnswer(*clientConnection, execMoneyOperation(request.getData()));
         break;
     }
     case FNS_SEND_X_REPORT:
     {
-        sendAnswer(*clientConnection, execXReport(response));
+        sendAnswer(*clientConnection, execXReport());
         break;
     }
     case FNS_SEND_Z_REPORT:
     {
-        sendAnswer(*clientConnection, execZReport(request.m_data, response));
+        sendAnswer(*clientConnection, execZReport(request.getData()));
         break;
     }
     default:
