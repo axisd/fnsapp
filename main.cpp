@@ -22,5 +22,19 @@ int main(int argc, char *argv[])
 
     FnsServer server("vpm.ini", &a);
 
-    return a.exec();
+    int ret(0);
+    try
+    {
+        ret = a.exec();
+    }
+    catch(std::exception &e)
+    {
+        LOG_MESSAGE(logger::t_fatal, "main", e.what());
+    }
+    catch(...)
+    {
+        LOG_MESSAGE(logger::t_fatal, "main", "Non std exeption");
+    }
+
+    return ret;
 }

@@ -16,7 +16,7 @@
     struct termios stored_settings;
 #endif*/
 
-const double Mult = 0.1;
+//const double Mult = 0.1;
 
 
 CGnivcSender::CGnivcSender(QObject *parent) :
@@ -232,9 +232,9 @@ void CGnivcSender::SendReceipt(const SSCO::ReceiptV1Ptr __receipt, QString& __fi
 		libvpm::Commodity commodity(iType,		// nothrow
             normItems[i]->m_name.toStdString(),
             __receipt->m_stock_name.toStdString(),
-            normItems[i]->m_quantity.get() * Mult,
-            normItems[i]->m_price.get() * Mult * 0.1,
-            (*(normItems[i]->m_total)).get() * Mult * 0.1);
+            normItems[i]->m_quantity.get_mde(),
+            normItems[i]->m_price.get_mde(),
+            (*(normItems[i]->m_total)).get_mde());
 
         for (int k = 0; k < normItems[i]->m_discounts.size(); ++k )
 		{
@@ -243,7 +243,7 @@ void CGnivcSender::SendReceipt(const SSCO::ReceiptV1Ptr __receipt, QString& __fi
 			libvpm::Modifier modifier(VPM_ITEM_REGULAR,		// nothrow
 				modType,
                 normItems[i]->m_discounts[k]->m_name.toStdString(),
-                abs(normItems[i]->m_discounts[k]->m_value.get()) * Mult * 0.1);
+                abs(normItems[i]->m_discounts[k]->m_value.get_mde()));
 
 			ticket.addModifier(modifier);	// nothrow
 		}
@@ -279,13 +279,13 @@ void CGnivcSender::SendReceipt(const SSCO::ReceiptV1Ptr __receipt, QString& __fi
         ticket.addTax(tax);		// nothrow
     }
 	
-    if (__receipt->m_payment_cash)
+    for (int i = 0; i < __receipt->m_payment_cash.size(); ++i)
     {
         vpmPayment_t pType = VPM_PAYMENT_CASH;
 
         libvpm::Payment payment(VPM_ITEM_REGULAR,
             pType,
-            __receipt->m_payment_cash->m_amount_with_change.get() * Mult * 0.1);
+            __receipt->m_payment_cash.at(i)->m_amount_with_change.get_mde());
 
         try
         {
@@ -301,12 +301,12 @@ void CGnivcSender::SendReceipt(const SSCO::ReceiptV1Ptr __receipt, QString& __fi
         }
     }
 
-    if (__receipt->m_payment_cashless)
+    for (int i = 0; i < __receipt->m_payment_cashless.size(); ++i)
     {
         vpmPayment_t pType = VPM_PAYMENT_CARD;
         libvpm::Payment payment(VPM_ITEM_REGULAR,
             pType,
-            __receipt->m_payment_cashless->m_amount.get() * Mult * 0.1);
+            __receipt->m_payment_cashless.at(i)->m_amount.get_mde());
 
         try
         {
@@ -324,7 +324,7 @@ void CGnivcSender::SendReceipt(const SSCO::ReceiptV1Ptr __receipt, QString& __fi
 
 	try
 	{
-        ticket.close((__receipt->getTotal().get()) * Mult * 0.1);
+        ticket.close(__receipt->getTotal().get_mde());
 	}
 	catch (const libvpm::VpmTicketError& e)
 	{
@@ -388,13 +388,11 @@ void CGnivcSender::SendMoneyOperation(const SSCO::MoneyOperationPtr __moHeader)
 		tType = VPM_MONEY_PLACEMENT_WITHDRAWAL;
     }
 
-    long long am = __moHeader->m_amount.get() * Mult * Mult;
-
 	try
 	{
 		libvpm::MoneyPlacementResponse response = m_instance->processMoneyPlacement(secs,
 			tType,
-			am);
+            __moHeader->m_amount.get_mde());
 	}
 	catch (const libvpm::VpmException& e)
 	{

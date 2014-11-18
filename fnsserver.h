@@ -22,19 +22,20 @@ public:
 
 private:
     QTcpServer *tcpServer;
-    CGnivcSender sender;
+    CGnivcSender gnivc_sender;
 
     CFNSProtocolResponse execReceipt(const QString &__data);
     CFNSProtocolResponse execZReport(const QString &__data);
     CFNSProtocolResponse execXReport();
     CFNSProtocolResponse execMoneyOperation(const QString &__data);
 
-    void sendAnswer(QTcpSocket &socket, CFNSProtocolResponse &__answer);
+    void sendAnswer(QTcpSocket &socket, CFNSProtocolResponse __answer);
 
 signals:
 
 public slots:
     void newDataToSend();
+    void readyRead();
 
 };
 

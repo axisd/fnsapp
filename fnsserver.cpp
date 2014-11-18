@@ -7,21 +7,40 @@
 // Qt
 #include <QTcpSocket>
 
+#if defined(_WIN32)
+#include <windows.h>
+#endif
+
+#if defined(__linux__)
+#include <unistd.h>
+#endif
+
+void sleep_ms(unsigned int ms)
+{
+#ifdef __linux__
+    usleep(ms * 1000);
+#endif
+#ifdef _WIN32
+    Sleep(ms);
+#endif
+}
+
 int g_port = 6661;
 
 FnsServer::FnsServer(const QString &__iniFile, QObject *parent) :
     QObject(parent)
 {
     tcpServer = new QTcpServer(this);
+
     if (!tcpServer->listen(QHostAddress("127.0.0.1"), g_port)) {
         LOG_MESSAGE(logger::t_fatal, "main",
                     tr("Unable to start the server: %1.").arg(tcpServer->errorString()));
         return;
     }
 
-    connect(tcpServer, SIGNAL(newConnection()), this, SLOT(newDataToSend()));
+    connect(tcpServer, SIGNAL(newConnection()), this, SLOT(newDataToSend()), Qt::DirectConnection);
 
-    if(!sender.initLibrary(__iniFile))
+    if(!gnivc_sender.initLibrary(__iniFile))
     {
         LOG_MESSAGE(logger::t_fatal, "main",
                     tr("Unable to init fns library."));
@@ -41,19 +60,37 @@ FnsServer::~FnsServer()
 
 CFNSProtocolResponse FnsServer::execReceipt(const QString &__data)
 {    
+    LOG_MESSAGE(logger::t_info, "main", QString("execReceipt. Data: %1").arg(__data));
+
     QString fiscalText;
-
-    QXmlStreamReader reader	(__data);
-    reader.readNext();
-    reader.readNext();
-
     SSCO::ReceiptV1Ptr receipt (new SSCO::ReceiptV1);
-    receipt->read(reader);
 
     try
     {
-        sender.SendReceipt(receipt, fiscalText);
+        QXmlStreamReader reader	(__data);
+        reader.readNext();
+        reader.readNext();
+
+        receipt->read(reader);
+    }
+    catch(std::exception &e)
+    {
+        LOG_MESSAGE(logger::t_fatal, "main",
+                    tr("Ошибка при разборе чека: %1").arg(e.what()));
+        CFNSProtocolResponse resp(FNS_TASK_FINISHED_FAIL, "");
+        return resp;
+    }
+
+
+    LOG_MESSAGE(logger::t_info, "main",
+                tr("Чек получен"));
+
+    try
+    {
+        gnivc_sender.SendReceipt(receipt, fiscalText);
         CFNSProtocolResponse resp(FNS_TASK_FINISHED_SUCCESS, fiscalText);
+        LOG_MESSAGE(logger::t_info, "main",
+                    tr("Чек успешно обработан. fiscalText: %1").arg(fiscalText));
         return resp;
     }
     catch(std::exception &e)
@@ -77,7 +114,7 @@ CFNSProtocolResponse FnsServer::execZReport(const QString &__data)
 
     try
     {
-        sender.SendZReport(sc);
+        gnivc_sender.SendZReport(sc);
         CFNSProtocolResponse resp(FNS_TASK_FINISHED_SUCCESS, "");
         return resp;
     }
@@ -95,7 +132,7 @@ CFNSProtocolResponse FnsServer::execXReport()
 {
     try
     {
-        sender.SendXReport();
+        gnivc_sender.SendXReport();
         CFNSProtocolResponse resp(FNS_TASK_FINISHED_SUCCESS, "");
         return resp;
     }
@@ -120,7 +157,7 @@ CFNSProtocolResponse FnsServer::execMoneyOperation(const QString &__data)
 
     try
     {
-        sender.SendMoneyOperation(mo);
+        gnivc_sender.SendMoneyOperation(mo);
         CFNSProtocolResponse resp(FNS_TASK_FINISHED_SUCCESS, "");
         return resp;
     }
@@ -134,11 +171,13 @@ CFNSProtocolResponse FnsServer::execMoneyOperation(const QString &__data)
     }
 }
 
-void FnsServer::sendAnswer(QTcpSocket &socket, CFNSProtocolResponse &__answer)
-{
+void FnsServer::sendAnswer(QTcpSocket &socket, CFNSProtocolResponse __answer)
+{    
     QByteArray data;
     QXmlStreamWriter data_writer (&data);
-    __answer.serialize(data_writer);
+    __answer.write(data_writer);
+
+    LOG_MESSAGE(logger::t_info, "main", QString("Send answer: %1").arg(QString(data)));
 
     try
     {
@@ -154,31 +193,46 @@ void FnsServer::sendAnswer(QTcpSocket &socket, CFNSProtocolResponse &__answer)
 
 void FnsServer::newDataToSend()
 {
+    LOG_MESSAGE(logger::t_info, "main", "New connection");
     QTcpSocket *clientConnection = tcpServer->nextPendingConnection();
     connect(clientConnection, SIGNAL(disconnected()),
             clientConnection, SLOT(deleteLater()));
 
+    connect(clientConnection, SIGNAL(readyRead()), this, SLOT(readyRead()));
+}
+
+void FnsServer::readyRead()
+{
+    LOG_MESSAGE(logger::t_info, "main", QString("Ready Read"));
+
+    QTcpSocket *socket = static_cast<QTcpSocket*>(sender());
+
     QByteArray data;
-    QByteArray close_request_tag = QString("</%1>").arg("SCO_UKM_PROTOCOL_REQUEST").toUtf8();
-    while (true)
+    QByteArray close_request_tag = QString("</%1>").arg("FNS_REQUEST").toUtf8();
+    while (socket->bytesAvailable() > 0)
     {
         QByteArray single_read;
         try
         {
-            single_read.append(clientConnection->read(300));
+            single_read.append(socket->readAll());
         }
         catch (std::runtime_error& e)
         {
-            qDebug() << QString("SCO - UKM Socket error: %1").arg(e.what());
+            LOG_MESSAGE(logger::t_info, "main", QString("FNS - UKM Socket error: %1").arg(e.what()));
             // TODO: return;
+            return;
         }
+
+        LOG_MESSAGE(logger::t_info, "main", QString("Size: %2 Data: %1").arg(QString(single_read)).arg(single_read.size()));
 
         data += single_read;
         if (data.contains(close_request_tag) )
         {
             break;
         }
-    }    
+    }
+
+    LOG_MESSAGE(logger::t_info, "main", QString("Size: %2 Data: %1").arg(QString(data)).arg(data.size()));
 
     QXmlStreamReader req_reader (QString::fromUtf8(data));
     CFNSProtocolRequest request;
@@ -188,27 +242,27 @@ void FnsServer::newDataToSend()
     {
     case FNS_SEND_RECEIPT:
     {
-        sendAnswer(*clientConnection, execReceipt(request.getData()));
+        sendAnswer(*socket, execReceipt(request.getData()));
         break;
     }
     case FNS_SEND_MONEY_OPERATION:
     {
-        sendAnswer(*clientConnection, execMoneyOperation(request.getData()));
+        sendAnswer(*socket, execMoneyOperation(request.getData()));
         break;
     }
     case FNS_SEND_X_REPORT:
     {
-        sendAnswer(*clientConnection, execXReport());
+        sendAnswer(*socket, execXReport());
         break;
     }
     case FNS_SEND_Z_REPORT:
     {
-        sendAnswer(*clientConnection, execZReport(request.getData()));
+        sendAnswer(*socket, execZReport(request.getData()));
         break;
     }
     default:
         throw std::runtime_error("Unknown Task Type");
     }
 
-    clientConnection->disconnectFromHost();
+    socket->disconnectFromHost();
 }

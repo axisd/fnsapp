@@ -315,9 +315,10 @@ void SaxSerializerBase::readCloseTag ( QXmlStreamReader& __reader, const QString
 	QString tag = __reader.name().toString();
 	if (!__reader.isEndElement())
 	{
-		throw std::runtime_error( QString("Неверный тэг. Ожидается закрывающий (%1 : %2)")
+        throw std::runtime_error( QString("Неверный тэг (%3). Ожидается закрывающий (%1 : %2)")
 			.arg(__reader.lineNumber())
-			.arg(__reader.errorString()).toStdString() );
+            .arg(__reader.errorString())
+            .arg(tag).toStdString() );
 	}
 
 	if ( __reader.name() !=__tag_name )

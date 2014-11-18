@@ -1,4 +1,6 @@
-﻿#include "receipt_v1.h"
+#include "receipt_v1.h"
+
+#include "liblogger/cdebug.h"
 
 using namespace SSCO;
 
@@ -24,37 +26,58 @@ void ReceiptV1::serialize(QXmlStreamWriter& __writer)
 	writeTag(__writer, "uploaded", m_uploaded);
 
 	writeVector(__writer, "ReceiptItems", m_items);
-
-	if (m_payment_cash)
-	{
-		m_payment_cash->write(__writer);
-	}
-
-	if (m_payment_cashless)
-	{
-		m_payment_cashless->write(__writer);
-	}	
+	writeVector(__writer, "PaymentCash", m_payment_cash);
+	writeVector(__writer, "PaymentCashless", m_payment_cashless);
 }
 
 void ReceiptV1::deserialize(QXmlStreamReader& __reader)
 {
 	readTag(__reader, "id", m_id);
+    LOG_MESSAGE(logger::t_info, "main", "ReceiptV1::deserialize id");
+
 	readTag(__reader, "global_number", m_global_number);
+    LOG_MESSAGE(logger::t_info, "main", "ReceiptV1::deserialize global_number");
+
 	readTag(__reader, "local_number", m_local_number);
+    LOG_MESSAGE(logger::t_info, "main", "ReceiptV1::deserialize local_number");
+
 	readTag(__reader, "shift_open", m_shift_open);
+    LOG_MESSAGE(logger::t_info, "main", "ReceiptV1::deserialize shift_open");
+
     readTag(__reader, "type", m_type);
+    LOG_MESSAGE(logger::t_info, "main", "ReceiptV1::deserialize type");
+
     readTag(__reader, "stock_name", m_stock_name);
+    LOG_MESSAGE(logger::t_info, "main", "ReceiptV1::deserialize stock_name");
+
 	readTag(__reader, "open_datetime", m_open_datetime);
+    LOG_MESSAGE(logger::t_info, "main", "ReceiptV1::deserialize open_datetime");
+
 	readOptional(__reader, "close_datetime", m_close_datetime );
+    LOG_MESSAGE(logger::t_info, "main", "ReceiptV1::deserialize close_datetime");
+
 	readOptional(__reader, "card_number", m_card_number );
+    LOG_MESSAGE(logger::t_info, "main", "ReceiptV1::deserialize card_number");
+
     readTag(__reader, "login_id", m_login_id);
+    LOG_MESSAGE(logger::t_info, "main", "ReceiptV1::deserialize login_id");
+
     readTag(__reader, "login_name", m_login_name);
+    LOG_MESSAGE(logger::t_info, "main", "ReceiptV1::deserialize login_name");
+
 	readTag(__reader, "uploaded", m_uploaded);	
+    LOG_MESSAGE(logger::t_info, "main", "ReceiptV1::deserialize uploaded");
+
 
     readVector<ModelReceiptItemV1>(__reader, "ReceiptItems", m_items);
+    LOG_MESSAGE(logger::t_info, "main", "ReceiptV1::deserialize ReceiptItems");
 
-	readObject<ModelReceiptPaymentCash>(__reader, "ReceiptPaymentCash", m_payment_cash);
-	readObject<ModelReceiptPaymentCashless>(__reader, "ReceiptPaymentCashless", m_payment_cashless);
+	readVector<ModelReceiptPaymentCash>(__reader, "PaymentCash", m_payment_cash);
+    LOG_MESSAGE(logger::t_info, "main", "ReceiptV1::deserialize PaymentCash");
+
+	readVector<ModelReceiptPaymentCashless>(__reader, "PaymentCashless", m_payment_cashless);
+    LOG_MESSAGE(logger::t_info, "main", "ReceiptV1::deserialize PaymentCashless");
+
 }
 
 void ReceiptV1::addItem (const boost::shared_ptr<ModelReceiptItemV1> &__item)

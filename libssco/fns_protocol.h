@@ -12,7 +12,7 @@ class CFNSProtocolRequest: public SaxSerializerBase
 	QString m_data;
 	
 public:
-	CFNSProtocolRequest(): SaxSerializerBase("FNS_PROTOCOL_REQUEST") {}
+    CFNSProtocolRequest(): SaxSerializerBase("FNS_REQUEST") {}
     CFNSProtocolRequest(unsigned int __efts);
 	void serialize (QXmlStreamWriter& __writer);
 	void deserialize (QXmlStreamReader& __reader);
@@ -37,10 +37,10 @@ class CFNSProtocolResponse: public SaxSerializerBase
 
 public:
     CFNSProtocolResponse(unsigned int __status, const QString& __data):
-      m_task_status(__status), m_data(__data), SaxSerializerBase("SCO_UKM_PROTOCOL_RESPONSE")
+      m_task_status(__status), m_data(__data), SaxSerializerBase("FNS_RESPONSE")
 	  {}
 	  
-    CFNSProtocolResponse(): SaxSerializerBase("FNS_PROTOCOL_RESPONSE") { m_task_status = FNS_TASK_STARTED; }
+    CFNSProtocolResponse(): SaxSerializerBase("FNS_RESPONSE") { m_task_status = FNS_TASK_STARTED; }
 	void serialize (QXmlStreamWriter& __writer);
 	void deserialize (QXmlStreamReader& __reader);
 	void parseRequestStr(const QString& __resp_str);

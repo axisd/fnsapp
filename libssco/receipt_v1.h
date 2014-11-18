@@ -33,8 +33,8 @@ namespace SSCO
 
         QVector<ReceiptItemV1Ptr> m_items;
 
-		ReceiptPaymentCashPtr m_payment_cash;
-		ReceiptPaymentCashlessPtr m_payment_cashless;
+		QVector<ReceiptPaymentCashPtr> m_payment_cash;
+		QVector<ReceiptPaymentCashlessPtr> m_payment_cashless;
 
 		unsigned int m_shift_number;
 	};

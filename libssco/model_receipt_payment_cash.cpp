@@ -1,5 +1,7 @@
 ﻿#include "model_receipt_payment_cash.h"
 
+#include "liblogger/cdebug.h"
+
 using namespace SSCO;
 
 ModelReceiptPaymentCash::ModelReceiptPaymentCash() : SaxSerializerBase("ReceiptPaymentCash"),
@@ -27,6 +29,11 @@ void ModelReceiptPaymentCash::serialize (QXmlStreamWriter& __writer)
 void ModelReceiptPaymentCash::deserialize (QXmlStreamReader& __reader)
 {
 	readTag(__reader, "receipt", m_receipt);
+    LOG_MESSAGE(logger::t_info, "main", "ModelReceiptPaymentCash::deserialize receipt");
+
 	readTag(__reader, "amount", m_amount);
+    LOG_MESSAGE(logger::t_info, "main", "ModelReceiptPaymentCash::deserialize amount");
+
 	readTag(__reader, "amount_with_change", m_amount_with_change);
+    LOG_MESSAGE(logger::t_info, "main", "ModelReceiptPaymentCash::deserialize amount_with_change");
 }
