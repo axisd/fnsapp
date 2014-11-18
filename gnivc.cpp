@@ -357,7 +357,7 @@ void CGnivcSender::SendReceipt(const SSCO::ReceiptV1Ptr __receipt, QString& __fi
 	}
 }
 
-void CGnivcSender::SendZReport(const SSCO::ShiftClosePtr __shift)
+void CGnivcSender::SendZReport(const SSCO::ShiftCloseV1Ptr __shift)
 {
     if (m_instance == NULL)
     {

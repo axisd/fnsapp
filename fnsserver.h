@@ -7,7 +7,7 @@
 // Main
 #include "libssco/receipt_v1.h"
 #include "libssco/money_operation.h"
-#include "libssco/shift_close.h"
+#include "libssco/shift_close_v1.h"
 #include "libssco/shift_open.h"
 #include "libssco/fns_protocol.h"
 #include "gnivc.h"

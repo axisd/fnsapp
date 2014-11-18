@@ -35,12 +35,12 @@ SOURCES += main.cpp \
     libssco/sax_serializer_base.cpp \
     libssco/shift_open.cpp \
     libssco/time_limitation.cpp \
-    libssco/shift_close.cpp \
     libssco/money_operation.cpp \
     libssco/receipt_v1.cpp \
     libssco/model_receipt_item_v1.cpp \
     libssco/receipt_item_tax.cpp \
-    libssco/fns_protocol.cpp
+    libssco/fns_protocol.cpp \
+    libssco/shift_close_v1.cpp
 
 HEADERS += fnsserver.h \
     gnivc.h \
@@ -67,8 +67,6 @@ HEADERS += fnsserver.h \
     libssco/sax_serializer_base.h \
     libssco/shift_open.h \
     libssco/time_limitation.h \
-    libssco/shift_close.h \
-    libssco/model_shift_close.h \
     libssco/money_operation.h \
     libssco/model_receipt_v1.h \
     libssco/receipt_v1.h \
@@ -77,7 +75,9 @@ HEADERS += fnsserver.h \
     libssco/receipt_item_tax.h \
     libssco/sco_task_description.h \
     libssco/fns_task_description.h \
-    libssco/fns_protocol.h
+    libssco/fns_protocol.h \
+    libssco/shift_close_v1.h \
+    libssco/model_shift_close_v1.h
 
 win32 {
     INCLUDEPATH += \

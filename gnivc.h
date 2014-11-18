@@ -13,7 +13,7 @@
 
 // Main
 #include "libssco/receipt_v1.h"
-#include "libssco/shift_close.h"
+#include "libssco/shift_close_v1.h"
 #include "libssco/money_operation.h"
 
 
@@ -27,7 +27,7 @@ public:
 	bool initLibrary(const QString& __iniFile);    
 
     void SendReceipt(const SSCO::ReceiptV1Ptr __receipt, QString& __fiscalText);
-    void SendZReport(const SSCO::ShiftClosePtr __shiftNumber);
+    void SendZReport(const SSCO::ShiftCloseV1Ptr __shiftNumber);
 	void SendXReport();
     void SendMoneyOperation(const SSCO::MoneyOperationPtr __moHeader);
 	void StopInstance(void);

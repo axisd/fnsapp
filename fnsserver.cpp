@@ -109,7 +109,7 @@ CFNSProtocolResponse FnsServer::execZReport(const QString &__data)
     reader.readNext();
     reader.readNext();
 
-    SSCO::ShiftClosePtr sc (new SSCO::ShiftClose);
+    SSCO::ShiftCloseV1Ptr sc (new SSCO::ShiftCloseV1);
     sc->read(reader);
 
     try
