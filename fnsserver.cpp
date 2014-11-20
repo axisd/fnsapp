@@ -6,6 +6,8 @@
 
 // Qt
 #include <QTcpSocket>
+#include <QEventLoop>
+#include <QTimer>
 
 #if defined(_WIN32)
 #include <windows.h>
@@ -27,12 +29,12 @@ void sleep_ms(unsigned int ms)
 
 int g_port = 6661;
 
-FnsServer::FnsServer(const QString &__iniFile, QObject *parent) :
+FnsServer::FnsServer(const QString &__iniFile, const QString &__listenAddr, QObject *parent) :
     QObject(parent)
 {
     tcpServer = new QTcpServer(this);
 
-    if (!tcpServer->listen(QHostAddress("127.0.0.1"), g_port)) {
+    if (!tcpServer->listen(QHostAddress(__listenAddr), g_port)) {
         LOG_MESSAGE(logger::t_fatal, "main",
                     tr("Unable to start the server: %1.").arg(tcpServer->errorString()));
         return;
@@ -207,6 +209,8 @@ void FnsServer::readyRead()
 
     QTcpSocket *socket = static_cast<QTcpSocket*>(sender());
 
+    uint number_of_retries = 3;
+
     QByteArray data;
     QByteArray close_request_tag = QString("</%1>").arg("FNS_REQUEST").toUtf8();
     while (socket->bytesAvailable() > 0)
@@ -230,6 +234,13 @@ void FnsServer::readyRead()
         {
             break;
         }
+        --number_of_retries;
+        if(number_of_retries <= 0)
+        {
+            LOG_MESSAGE(logger::t_info, "main", QString("Превышен интервал ожидания запроса"));
+            break;
+        }
+        procEvent(200);
     }
 
     LOG_MESSAGE(logger::t_info, "main", QString("Size: %2 Data: %1").arg(QString(data)).arg(data.size()));
@@ -265,4 +276,11 @@ void FnsServer::readyRead()
     }
 
     socket->disconnectFromHost();
+}
+
+void FnsServer::procEvent(const int pause)
+{
+    QEventLoop tELoop;
+    QTimer::singleShot(pause, &tELoop, SLOT(quit()));
+    tELoop.exec();
 }

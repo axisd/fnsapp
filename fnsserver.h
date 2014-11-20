@@ -17,7 +17,7 @@ class FnsServer : public QObject
 {
     Q_OBJECT
 public:
-    explicit FnsServer(const QString &__iniFile, QObject *parent = 0);
+    explicit FnsServer(const QString &__iniFile, const QString &__listenAddr, QObject *parent = 0);
     ~FnsServer();
 
 private:
@@ -30,6 +30,7 @@ private:
     CFNSProtocolResponse execMoneyOperation(const QString &__data);
 
     void sendAnswer(QTcpSocket &socket, CFNSProtocolResponse __answer);
+    void procEvent(const int pause);
 
 signals:
 

@@ -20,11 +20,31 @@ int main(int argc, char *argv[])
     #endif //__linux__
                 ), "HH:mm:ss");
 
-    FnsServer server("vpm.ini", &a);
+    LOG_MESSAGE(logger::t_info, "main",
+                QString("Start fnsapp"));
+
+    QString listen_addr("127.0.0.1");
+
+    QStringList args = a.arguments();
+    for (int i = 1; i < args.size(); i++)
+    {
+        if (args[i] == "--listen")
+        {
+            if (i+1 < args.size())
+            {
+                listen_addr = args[i+1];
+                i++;
+            }
+        }
+    }
+
+    LOG_MESSAGE(logger::t_info, "main",
+                QString("Start fns app"));
 
     int ret(0);
     try
     {
+        FnsServer server("vpm.ini", listen_addr, &a);
         ret = a.exec();
     }
     catch(std::exception &e)
@@ -35,6 +55,9 @@ int main(int argc, char *argv[])
     {
         LOG_MESSAGE(logger::t_fatal, "main", "Non std exeption");
     }
+
+    LOG_MESSAGE(logger::t_info, "main",
+                QString("Exit fnsapp: %1").arg(ret));
 
     return ret;
 }

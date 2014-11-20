@@ -107,7 +107,7 @@ void SaxSerializerBase::readTag(QXmlStreamReader& __reader, const QString& __tag
 
 void SaxSerializerBase::readTag(QXmlStreamReader& __reader, const QString& __tag_name, QDateTime& __val )
 {
-	__val.fromString(readSimpleProperty(__reader, __tag_name), "yyyy-MM-dd HH:mm:ss");
+    __val = QDateTime::fromString(readSimpleProperty(__reader, __tag_name), "yyyy-MM-dd HH:mm:ss");
 }
 
 void SaxSerializerBase::writeOptional (QXmlStreamWriter& __writer, const QString& __tag_name, const boost::optional<bool> &__val)

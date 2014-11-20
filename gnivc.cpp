@@ -207,7 +207,13 @@ void CGnivcSender::SendReceipt(const SSCO::ReceiptV1Ptr __receipt, QString& __fi
 		DEBUG_ASSERT(false);
 	};
 
-    int secs = __receipt->m_open_datetime.toTime_t();
+    QDateTime epoch(QDate(1970,1,1), QTime(0,0,0));
+    unsigned int secs = epoch.secsTo(__receipt->m_open_datetime);
+
+    LOG_MESSAGE(logger::t_info, "main",
+                tr("Receipt time: DateTime(%1) Secs(%2)")
+                .arg(__receipt->m_open_datetime.toString("ddMMyyyy hhmmss"))
+                .arg(secs));
 
 	libvpm::Ticket ticket(VPM_DOMAIN_TRADING, // nothrow
 		op,
@@ -364,7 +370,13 @@ void CGnivcSender::SendZReport(const SSCO::ShiftCloseV1Ptr __shift)
         throw(std::runtime_error("Библиотека libvpm не запущена. Данные отправляться не будут."));
     }
 
-    int secs = __shift->m_date.toTime_t();
+    const QDateTime epoch(QDate(1970,1,1), QTime(0,0,0));
+    const quint64 secs = epoch.secsTo(__shift->m_date);
+
+    LOG_MESSAGE(logger::t_info, "main",
+                tr("ZReport time: DateTime(%1) Secs(%2)")
+                .arg(__shift->m_date.toString("ddMMyyyy hhmmss"))
+                .arg(secs));
 
 	if (m_instance)
     {
@@ -414,7 +426,7 @@ void CGnivcSender::SendXReport()
 
 void CGnivcSender::procEvent(const int pause)
 {
-    QEventLoop *tELoop = new QEventLoop(this);
-    QTimer::singleShot(pause, tELoop, SLOT(quit()));
-    tELoop->exec();
+    QEventLoop tELoop;
+    QTimer::singleShot(pause, &tELoop, SLOT(quit()));
+    tELoop.exec();
 }
