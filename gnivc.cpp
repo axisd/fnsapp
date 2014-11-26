@@ -28,24 +28,13 @@ CGnivcSender::~CGnivcSender()
 
 void CGnivcSender::ClearToken(const QString& __fileName)
 {
-    QString bkp_fileName(__fileName);
-    bkp_fileName.append(".bkp");
-
-	QFile file(__fileName);
-    QFile file_bkp(bkp_fileName);
+    QFile file(__fileName);
 
 	QByteArray content;
 
 	file.open(QIODevice::ReadOnly);
 	content = file.readAll();
-	file.close();
-
-    if(!file_bkp.exists())
-    {
-        file_bkp.open(QIODevice::WriteOnly);
-        file_bkp.write(content);
-        file_bkp.close();
-    }
+    file.close();
 
 	QList<QByteArray> iniList(content.split(0x0A));
 
@@ -73,14 +62,7 @@ bool CGnivcSender::initLibrary(const QString& __iniFile)
 
 	m_instance = NULL;
 
-	libvpm::Settings settings;
-//	settings.setToken(96355186);
-//	settings.setTimeout(3000);
-//	settings.setHost("k-server.test-gnivc.ru");
-//	settings.setKkmId(10046);
-//	settings.setPort(7777);
-//	settings.setSsl(false);
-
+    libvpm::Settings settings;
     settings = libvpm::SettingsLoader::loadFromFile(__iniFile.toStdString(), true);
 
     bool ok(false);
@@ -101,7 +83,7 @@ bool CGnivcSender::initLibrary(const QString& __iniFile)
             break;
         }
 
-            /** Автономный */
+        /** Автономный */
         case MODE_RESCUE:
         {
             LOG_MESSAGE(logger::t_info, "main",
@@ -110,7 +92,7 @@ bool CGnivcSender::initLibrary(const QString& __iniFile)
             break;
         }
 
-            /** Заблокирован (из-за неправильного токена) */
+        /** Заблокирован (из-за неправильного токена) */
         case MODE_BLOCKED_INVALID_TOKEN:
         {
             LOG_MESSAGE(logger::t_fatal, "main",
@@ -119,7 +101,7 @@ bool CGnivcSender::initLibrary(const QString& __iniFile)
             break;
         }
 
-            /** Не пройдена начальная инициализация */
+        /** Не пройдена начальная инициализация */
         case MODE_NOT_INITIALIZED:
         {
             LOG_MESSAGE(logger::t_fatal, "main",
@@ -128,7 +110,7 @@ bool CGnivcSender::initLibrary(const QString& __iniFile)
             break;
         }
 
-            /** Заблокирован */
+        /** Заблокирован */
         case MODE_BLOCKED:
         {
             LOG_MESSAGE(logger::t_fatal, "main",
@@ -137,9 +119,9 @@ bool CGnivcSender::initLibrary(const QString& __iniFile)
             break;
         }
 
-            /** Заблокирован (превышено время нахождения в аварийном режиме)
-                 *  (считается от первого аварийного чека).
-                 */
+       /** Заблокирован (превышено время нахождения в аварийном режиме)
+         *  (считается от первого аварийного чека).
+         */
         case MODE_BLOCKED_RESCUE_PERIOD_EXCEEDED:
         {
             LOG_MESSAGE(logger::t_fatal, "main",
@@ -149,10 +131,12 @@ bool CGnivcSender::initLibrary(const QString& __iniFile)
         }
 
         default:
-        LOG_MESSAGE(logger::t_fatal, "main",
-                    QString("Неизвестное состояние"));
-        ok = false;
-        break;
+        {
+            LOG_MESSAGE(logger::t_fatal, "main",
+                        QString("Неизвестное состояние"));
+            ok = false;
+            break;
+        }
     }
 
     if(!ok)
@@ -183,9 +167,6 @@ void CGnivcSender::SendReceipt(const SSCO::ReceiptV1Ptr __receipt, QString& __fi
     {
 		throw(std::runtime_error("Библиотека libvpm не запущена. Данные отправляться не будут."));
     }
-
-//	if (m_instance->mode() != MODE_NORMAL && m_instance->mode() != MODE_RESCUE)
-	//	throw(std::runtime_error(QString("Р РµР¶РёРј libvpm %1. Р”Р°РЅРЅС‹Рµ РѕС‚РїСЂР°РІР»РµРЅС‹ РЅРµ Р±СѓРґСѓС‚.").arg(m_instance->mode()).toStdString()));
 
 	vpmOperation_t op;
     switch (__receipt->m_type)
@@ -272,7 +253,7 @@ void CGnivcSender::SendReceipt(const SSCO::ReceiptV1Ptr __receipt, QString& __fi
 			true);
 
 		ticket.addTax(tax);		// nothrow
-    }*/
+    }
 
     for (int i = 0; i < __receipt->m_items.size(); ++i)
     {
@@ -283,7 +264,7 @@ void CGnivcSender::SendReceipt(const SSCO::ReceiptV1Ptr __receipt, QString& __fi
             true);
 
         ticket.addTax(tax);		// nothrow
-    }
+    }*/
 	
     for (int i = 0; i < __receipt->m_payment_cash.size(); ++i)
     {
@@ -384,18 +365,19 @@ void CGnivcSender::SendZReport(const SSCO::ShiftCloseV1Ptr __shift)
     }
 }
 
-void CGnivcSender::SendMoneyOperation(const SSCO::MoneyOperationPtr __moHeader)
+void CGnivcSender::SendMoneyOperation(const SSCO::MoneyOperationV1Ptr __moHeader)
 {
     if (m_instance == NULL)
     {
         throw(std::runtime_error("Библиотека libvpm не запущена. Данные отправляться не будут."));
     }
 
-    int secs = __moHeader->m_date.toTime_t();
+    const QDateTime epoch(QDate(1970,1,1), QTime(0,0,0));
+    const quint64 secs = epoch.secsTo(__moHeader->m_date);
 
 	vpmMoneyPlacement_t tType = VPM_MONEY_PLACEMENT_DEPOSIT;
 
-    if (__moHeader->m_type == SSCO::MoneyOperation::PAID_OUT)
+    if (__moHeader->m_type == SSCO::MoneyOperationV1::PAID_OUT)
     {
 		tType = VPM_MONEY_PLACEMENT_WITHDRAWAL;
     }

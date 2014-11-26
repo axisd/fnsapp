@@ -33,52 +33,52 @@ void ReceiptV1::serialize(QXmlStreamWriter& __writer)
 void ReceiptV1::deserialize(QXmlStreamReader& __reader)
 {
 	readTag(__reader, "id", m_id);
-    LOG_MESSAGE(logger::t_info, "main", QString("ReceiptV1::deserialize id: %1").arg(m_id));
+//    LOG_MESSAGE(logger::t_info, "main", QString("ReceiptV1::deserialize id: %1").arg(m_id));
 
 	readTag(__reader, "global_number", m_global_number);
-    LOG_MESSAGE(logger::t_info, "main", QString("ReceiptV1::deserialize global_number: %1").arg(m_global_number));
+//    LOG_MESSAGE(logger::t_info, "main", QString("ReceiptV1::deserialize global_number: %1").arg(m_global_number));
 
 	readTag(__reader, "local_number", m_local_number);
-    LOG_MESSAGE(logger::t_info, "main", QString("ReceiptV1::deserialize local_number: %1").arg(m_local_number));
+//    LOG_MESSAGE(logger::t_info, "main", QString("ReceiptV1::deserialize local_number: %1").arg(m_local_number));
 
 	readTag(__reader, "shift_open", m_shift_open);
-    LOG_MESSAGE(logger::t_info, "main", QString("ReceiptV1::deserialize shift_open: %1").arg(m_shift_open));
+//    LOG_MESSAGE(logger::t_info, "main", QString("ReceiptV1::deserialize shift_open: %1").arg(m_shift_open));
 
     readTag(__reader, "type", m_type);
-    LOG_MESSAGE(logger::t_info, "main", QString("ReceiptV1::deserialize type: %1").arg(m_type));
+//    LOG_MESSAGE(logger::t_info, "main", QString("ReceiptV1::deserialize type: %1").arg(m_type));
 
     readTag(__reader, "stock_name", m_stock_name);
-    LOG_MESSAGE(logger::t_info, "main", QString("ReceiptV1::deserialize stock_name: %1").arg(m_stock_name));
+//    LOG_MESSAGE(logger::t_info, "main", QString("ReceiptV1::deserialize stock_name: %1").arg(m_stock_name));
 
     readTag(__reader, "open_datetime", m_open_datetime);
-    LOG_MESSAGE(logger::t_info, "main", QString("ReceiptV1::deserialize open_datetime: %1").arg(m_open_datetime.toString("ddMMyyyy hhmmss")));
+//    LOG_MESSAGE(logger::t_info, "main", QString("ReceiptV1::deserialize open_datetime: %1").arg(m_open_datetime.toString("ddMMyyyy hhmmss")));
 
 	readOptional(__reader, "close_datetime", m_close_datetime );
-    LOG_MESSAGE(logger::t_info, "main", QString("ReceiptV1::deserialize close_datetime: %1")
-                .arg((m_close_datetime ? (*m_close_datetime).toString("ddMMyyyy hhmmss") : "ne zadan")));
+//    LOG_MESSAGE(logger::t_info, "main", QString("ReceiptV1::deserialize close_datetime: %1")
+//                .arg((m_close_datetime ? (*m_close_datetime).toString("ddMMyyyy hhmmss") : "ne zadan")));
 
 	readOptional(__reader, "card_number", m_card_number );
-    LOG_MESSAGE(logger::t_info, "main", QString("ReceiptV1::deserialize card_number: %1")
-                .arg((m_card_number ? (*m_card_number) : "ne zadan")));
+//    LOG_MESSAGE(logger::t_info, "main", QString("ReceiptV1::deserialize card_number: %1")
+//                .arg((m_card_number ? (*m_card_number) : "ne zadan")));
 
     readTag(__reader, "login_id", m_login_id);
-    LOG_MESSAGE(logger::t_info, "main", QString("ReceiptV1::deserialize login_id: %1").arg(m_login_id));
+//    LOG_MESSAGE(logger::t_info, "main", QString("ReceiptV1::deserialize login_id: %1").arg(m_login_id));
 
     readTag(__reader, "login_name", m_login_name);
-    LOG_MESSAGE(logger::t_info, "main", QString("ReceiptV1::deserialize login_name: %1").arg(m_login_name));
+//    LOG_MESSAGE(logger::t_info, "main", QString("ReceiptV1::deserialize login_name: %1").arg(m_login_name));
 
 	readTag(__reader, "uploaded", m_uploaded);	
-    LOG_MESSAGE(logger::t_info, "main", QString("ReceiptV1::deserialize uploaded: %1").arg(m_uploaded));
+//    LOG_MESSAGE(logger::t_info, "main", QString("ReceiptV1::deserialize uploaded: %1").arg(m_uploaded));
 
 
     readVector<ModelReceiptItemV1>(__reader, "ReceiptItems", m_items);
-    LOG_MESSAGE(logger::t_info, "main", "ReceiptV1::deserialize ReceiptItems");
+//    LOG_MESSAGE(logger::t_info, "main", "ReceiptV1::deserialize ReceiptItems");
 
 	readVector<ModelReceiptPaymentCash>(__reader, "PaymentCash", m_payment_cash);
-    LOG_MESSAGE(logger::t_info, "main", "ReceiptV1::deserialize PaymentCash");
+//    LOG_MESSAGE(logger::t_info, "main", "ReceiptV1::deserialize PaymentCash");
 
 	readVector<ModelReceiptPaymentCashless>(__reader, "PaymentCashless", m_payment_cashless);
-    LOG_MESSAGE(logger::t_info, "main", "ReceiptV1::deserialize PaymentCashless");
+//    LOG_MESSAGE(logger::t_info, "main", "ReceiptV1::deserialize PaymentCashless");
 
 }
 

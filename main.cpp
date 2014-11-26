@@ -12,9 +12,9 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
 
-    c_log().set_format(QString("'%1/logs-fnsservice'/yyyy/MM/yyyy-MM-dd'.log'").arg(
+    c_log().set_format(QString("'%1'/yyyy-MM-dd'.log'").arg(
     #ifdef __linux__
-                "/var/log/fnsservice"
+                "/var/log/fnsproxy"
     #else
                 QCoreApplication::applicationDirPath()
     #endif //__linux__
@@ -24,8 +24,9 @@ int main(int argc, char *argv[])
                 QString("Start fnsapp"));
 
     QString listen_addr("127.0.0.1");
+    QString ini_file("vpm.ini");
 
-    QStringList args = a.arguments();
+    const QStringList args = a.arguments();
     for (int i = 1; i < args.size(); i++)
     {
         if (args[i] == "--listen")
@@ -33,6 +34,14 @@ int main(int argc, char *argv[])
             if (i+1 < args.size())
             {
                 listen_addr = args[i+1];
+                i++;
+            }
+        }
+        else if (args[i] == "--ini")
+        {
+            if (i+1 < args.size())
+            {
+                ini_file = args[i+1];
                 i++;
             }
         }
@@ -44,7 +53,16 @@ int main(int argc, char *argv[])
     int ret(0);
     try
     {
-        FnsServer server("vpm.ini", listen_addr, &a);
+        FnsServer server(ini_file, listen_addr, &a);
+
+        LOG_MESSAGE(logger::t_info, "main", "Initialization vpm instance...");
+        server.initVpm();
+        LOG_MESSAGE(logger::t_info, "main", "Initialization vpm instance... SUCCESS");
+
+        LOG_MESSAGE(logger::t_info, "main", "Starting listening service...");
+        server.startServer();
+        LOG_MESSAGE(logger::t_info, "main", "Starting listening service... SUCCESS");
+
         ret = a.exec();
     }
     catch(std::exception &e)

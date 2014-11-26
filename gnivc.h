@@ -14,7 +14,7 @@
 // Main
 #include "libssco/receipt_v1.h"
 #include "libssco/shift_close_v1.h"
-#include "libssco/money_operation.h"
+#include "libssco/money_operation_v1.h"
 
 
 class CGnivcSender : public QObject
@@ -29,7 +29,7 @@ public:
     void SendReceipt(const SSCO::ReceiptV1Ptr __receipt, QString& __fiscalText);
     void SendZReport(const SSCO::ShiftCloseV1Ptr __shiftNumber);
 	void SendXReport();
-    void SendMoneyOperation(const SSCO::MoneyOperationPtr __moHeader);
+    void SendMoneyOperation(const SSCO::MoneyOperationV1Ptr __moHeader);
 	void StopInstance(void);
 
 private:

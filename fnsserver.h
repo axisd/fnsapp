@@ -6,7 +6,7 @@
 
 // Main
 #include "libssco/receipt_v1.h"
-#include "libssco/money_operation.h"
+#include "libssco/money_operation_v1.h"
 #include "libssco/shift_close_v1.h"
 #include "libssco/shift_open.h"
 #include "libssco/fns_protocol.h"
@@ -20,9 +20,15 @@ public:
     explicit FnsServer(const QString &__iniFile, const QString &__listenAddr, QObject *parent = 0);
     ~FnsServer();
 
+    void initVpm(); // throws
+    void startServer(); // throws
+
 private:
-    QTcpServer *tcpServer;
+    QTcpServer *m_tcpServer;
     CGnivcSender gnivc_sender;
+
+    const QString m_iniFileName;
+    const QString m_listenIP;
 
     CFNSProtocolResponse execReceipt(const QString &__data);
     CFNSProtocolResponse execZReport(const QString &__data);

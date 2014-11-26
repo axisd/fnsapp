@@ -40,7 +40,8 @@ SOURCES += main.cpp \
     libssco/model_receipt_item_v1.cpp \
     libssco/receipt_item_tax.cpp \
     libssco/fns_protocol.cpp \
-    libssco/shift_close_v1.cpp
+    libssco/shift_close_v1.cpp \
+    libssco/money_operation_v1.cpp
 
 HEADERS += fnsserver.h \
     gnivc.h \
@@ -77,7 +78,9 @@ HEADERS += fnsserver.h \
     libssco/fns_task_description.h \
     libssco/fns_protocol.h \
     libssco/shift_close_v1.h \
-    libssco/model_shift_close_v1.h
+    libssco/model_shift_close_v1.h \
+    libssco/model_money_operation_v1.h \
+    libssco/money_operation_v1.h
 
 win32 {
     INCLUDEPATH += \
