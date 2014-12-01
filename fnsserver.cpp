@@ -43,7 +43,7 @@ void FnsServer::initVpm()
     if(!gnivc_sender.initLibrary(m_iniFileName))
     {
         LOG_MESSAGE(logger::t_fatal, "main", "Initialization vpm instance... FAIL");
-        throw std::exception(tr("Unable to init fns library.").toStdString().c_str());
+        throw(std::runtime_error(QString("Unable to init fns library.").toStdString().c_str()));
     }
 }
 
@@ -56,14 +56,14 @@ void FnsServer::startServer()
         if (!m_tcpServer->listen(QHostAddress(m_listenIP), g_port))
         {
             LOG_MESSAGE(logger::t_fatal, "main", "Starting listening service... FAIL");
-            throw std::exception(tr("Unable to start the server: %1.").arg(m_tcpServer->errorString()).toStdString().c_str());
+            throw(std::runtime_error(QString("Unable to start the server: %1.").arg(m_tcpServer->errorString()).toStdString().c_str()));
         }
 
         connect(m_tcpServer, SIGNAL(newConnection()), this, SLOT(newDataToSend()), Qt::DirectConnection);
     }
     else
     {
-        throw std::exception("Server is already created");
+        throw(std::runtime_error("Server is already created"));
     }
 }
 

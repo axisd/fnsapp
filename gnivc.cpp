@@ -179,10 +179,7 @@ void CGnivcSender::SendReceipt(const SSCO::ReceiptV1Ptr __receipt, QString& __fi
     case SSCO::ModelReceiptV1::HEADER_RETURN :
     case SSCO::ModelReceiptV1::HEADER_RETURN_BY_RECEIPT :
 		op = VPM_OPERATION_SELL_RETURN;
-		break;
-
-    case SSCO::ModelReceiptV1::HEADER_STOCK_COUNT :
-		break;
+        break;
 
 	default :
 		DEBUG_ASSERT(false);
@@ -223,6 +220,8 @@ void CGnivcSender::SendReceipt(const SSCO::ReceiptV1Ptr __receipt, QString& __fi
             normItems[i]->m_price.get_mde(),
             (*(normItems[i]->m_total)).get_mde());
 
+        ticket.addCommodity(commodity);		// nothrow
+
         for (int k = 0; k < normItems[i]->m_discounts.size(); ++k )
 		{
             vpmModifier_t modType(normItems[i]->m_discounts[k]->m_value.sign() < 0 ? VPM_MODIFIER_DISCOUNT : VPM_MODIFIER_MARKUP);
@@ -233,9 +232,7 @@ void CGnivcSender::SendReceipt(const SSCO::ReceiptV1Ptr __receipt, QString& __fi
                 abs(normItems[i]->m_discounts[k]->m_value.get_mde()));
 
 			ticket.addModifier(modifier);	// nothrow
-		}
-
-		ticket.addCommodity(commodity);		// nothrow
+		}		
 	}
 
     // TODO: Налоги доделать потом
@@ -401,7 +398,8 @@ void CGnivcSender::SendXReport()
         throw(std::runtime_error("Библиотека libvpm не запущена. Данные отправляться не будут."));
     }
 
-    int secs = QDateTime::currentDateTime().toTime_t();
+    const QDateTime epoch(QDate(1970,1,1), QTime(0,0,0));
+    const quint64 secs = epoch.secsTo(QDateTime::currentDateTime());
 
 	libvpm::ReportResponse xResponse = m_instance->processGetReport(VPM_REPORT_X, secs);
 }
