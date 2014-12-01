@@ -388,7 +388,17 @@ void CGnivcSender::SendMoneyOperation(const SSCO::MoneyOperationV1Ptr __moHeader
 	catch (const libvpm::VpmException& e)
 	{
 		DEBUG_CHECKPOINT(logger::t_warning, QString("Cannot process money operation, %1").arg(e.what()));
-	}
+    }
+}
+
+unsigned int CGnivcSender::CheckInstance()
+{
+    if(m_instance == NULL)
+    {
+        throw(std::runtime_error("Библиотека libvpm не запущена. Данные отправляться не будут."));
+    }
+
+    return static_cast<unsigned int>(m_instance->mode());
 }
 
 void CGnivcSender::SendXReport()

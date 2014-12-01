@@ -79,6 +79,15 @@ FnsServer::~FnsServer()
         delete m_tcpServer;
         m_tcpServer = NULL;
     }
+
+    try
+    {
+        gnivc_sender.StopInstance();
+    }
+    catch(std::exception &e)
+    {
+        LOG_MESSAGE(logger::t_fatal, "main", QString("Error when stopping fns instance: %1").arg(e.what()));
+    }
 }
 
 CFNSProtocolResponse FnsServer::execReceipt(const QString &__data)
@@ -212,6 +221,23 @@ CFNSProtocolResponse FnsServer::execMoneyOperation(const QString &__data)
     }
 }
 
+CFNSProtocolResponse FnsServer::execPingFNS()
+{
+    try
+    {
+        unsigned int status = gnivc_sender.CheckInstance();
+        CFNSProtocolResponse resp(FNS_TASK_FINISHED_SUCCESS, QString("%1").arg(status));
+        return resp;
+    }
+    catch(std::exception &e)
+    {
+        const QString msg(tr("Ошибка при отправке денежной операции: %1.").arg(e.what()));
+        LOG_MESSAGE(logger::t_fatal, "main", msg);
+        CFNSProtocolResponse resp(FNS_TASK_FINISHED_FAIL, msg);
+        return resp;
+    }
+}
+
 void FnsServer::sendAnswer(QTcpSocket &socket, CFNSProtocolResponse __answer)
 {    
     QByteArray data;
@@ -332,6 +358,11 @@ void FnsServer::readyRead()
         case FNS_SEND_Z_REPORT:
         {
             sendAnswer(*socket, execZReport(request.getData()));
+            break;
+        }
+        case FNS_PING:
+        {
+            sendAnswer(*socket, execPingFNS());
             break;
         }
         default:

@@ -34,6 +34,7 @@ private:
     CFNSProtocolResponse execZReport(const QString &__data);
     CFNSProtocolResponse execXReport();
     CFNSProtocolResponse execMoneyOperation(const QString &__data);
+    CFNSProtocolResponse execPingFNS();
 
     void sendAnswer(QTcpSocket &socket, CFNSProtocolResponse __answer);
     void procEvent(const int pause);

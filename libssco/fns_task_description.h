@@ -11,6 +11,7 @@ enum FNSTaskStatus
 
 enum FNSTaskTypes
 {
+    FNS_PING,
     FNS_SEND_RECEIPT,
     FNS_SEND_MONEY_OPERATION,
     FNS_SEND_Z_REPORT,

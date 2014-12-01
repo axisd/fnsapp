@@ -30,6 +30,7 @@ public:
     void SendZReport(const SSCO::ShiftCloseV1Ptr __shiftNumber);
 	void SendXReport();
     void SendMoneyOperation(const SSCO::MoneyOperationV1Ptr __moHeader);
+    unsigned int CheckInstance(void);
 	void StopInstance(void);
 
 private:
