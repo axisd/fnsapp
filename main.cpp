@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
                 ), "HH:mm:ss");
 
     LOG_MESSAGE(logger::t_info, "main",
-                QString("Start fnsapp"));
+                QString("----- Start fnsapp v.0.5 -----"));
 
     QString listen_addr("127.0.0.1");
     QString ini_file("vpm.ini");
